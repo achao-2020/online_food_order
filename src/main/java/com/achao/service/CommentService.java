@@ -12,6 +12,7 @@ import com.achao.pojo.po.CommentPO;
 import com.achao.pojo.po.SearchCriteriaPO;
 import com.achao.utils.DateUtil;
 import com.achao.utils.ResponseUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mysql.cj.util.StringUtils;
 import lombok.extern.log4j.Log4j;
@@ -70,7 +71,9 @@ public class CommentService extends BaseService<CommentMapper, CommentPO, Commen
     }
 
     public Result<CommentVO> queryById(String id) {
-        CommentPO commentPO = this.baseMapper.selectById(id);
+        QueryWrapper<CommentPO> wrapper = new QueryWrapper<>();
+        wrapper.eq("order_id", id);
+        CommentPO commentPO = this.baseMapper.selectOne(wrapper);
         CommentVO commentVO = new CommentVO();
         BeanUtils.copyProperties(commentPO, commentVO);
         return ResponseUtil.simpleSuccessInfo(commentVO);

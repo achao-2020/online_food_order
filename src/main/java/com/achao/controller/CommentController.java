@@ -34,7 +34,7 @@ public class CommentController {
         commentService.deleteById(id);
     }
 
-    @ApiOperation(value = "根据id查找评论", response = Result.class)
+    @ApiOperation(value = "根据订单id查找评论", response = Result.class)
     @GetMapping("/queryById/{id}")
     public Result<CommentVO> queryById(@PathVariable("id") String id) {
         return commentService.queryById(id);

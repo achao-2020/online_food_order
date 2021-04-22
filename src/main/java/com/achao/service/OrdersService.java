@@ -1,5 +1,6 @@
 package com.achao.service;
 
+import com.achao.pojo.constant.HttpStatus;
 import com.achao.pojo.dto.OrderDTO;
 import com.achao.pojo.dto.QueryPageDTO;
 import com.achao.pojo.po.OrderPO;
@@ -58,8 +59,8 @@ public class OrdersService extends BaseService<OrderMapper, OrderPO, OrderVO> {
             // 如果id为null或者为空，则增加一个admin
             if (StringUtils.isNullOrEmpty(dto.getId())) {
                 orderPO.setId("ord" + DateUtil.format(new Date()));
-                // 订单创建的时候是未完成的状态
-                orderPO.setStatus("0");
+                // 订单创建的时候是提交状态的状态
+                orderPO.setStatus("1");
                 super.createCurrency(orderPO);
                 OrderVO orderVO = (OrderVO) super.getVo(new OrderVO(), orderPO);
                 rs.getInfo().add(orderVO);
@@ -74,14 +75,6 @@ public class OrdersService extends BaseService<OrderMapper, OrderPO, OrderVO> {
             }
         });
         return rs;
-    }
-
-
-    public Result<OrderVO> updateOrder(OrderDTO dto) {
-        OrderPO orderTo = (OrderPO) super.getTo(new OrderPO(), dto);
-        super.updateCurrency(orderTo);
-        OrderVO orderVO = (OrderVO) super.getVo(new OrderVO(), orderTo);
-        return ResponseUtil.simpleSuccessInfo(orderVO);
     }
 
     public void deleteById(String id) {
@@ -107,5 +100,18 @@ public class OrdersService extends BaseService<OrderMapper, OrderPO, OrderVO> {
         orderPO.setId(orderId);
         orderPO.setDeliveredId(deliverId);
         this.baseMapper.updateById(orderPO);
+    }
+
+    public Result<String> delivering(String id) {
+        OrderPO orderPO = new OrderPO();
+        orderPO.setId(id);
+        orderPO.setStatus("2");
+        try {
+            super.updateCurrency(orderPO);
+        } catch (Exception e) {
+            return ResponseUtil.simpleFail(HttpStatus.ERROR, "server error");
+        }
+
+        return ResponseUtil.simpleSuccessInfo("success");
     }
 }

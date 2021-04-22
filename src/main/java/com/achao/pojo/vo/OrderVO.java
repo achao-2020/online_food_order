@@ -14,7 +14,7 @@ public class OrderVO extends BaseVO{
     private String id;
     @ApiModelProperty(value = "finish_time", notes = "订单完成时间")
     private Date finishTime;
-    @ApiModelProperty(value = "status", notes = "订单状态，status=1时候，表示订单完成，status=2表未付款, status=3表未完成")
+    @ApiModelProperty(value = "status", notes = "订单状态，status=1时候，表示订单准备，status=2配送中, status=3完成")
     private String status;
     @ApiModelProperty(value = "customerId", notes = "订单关联顾客id")
     private String customer_id;

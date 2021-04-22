@@ -22,7 +22,7 @@ public class OrderController {
     private OrdersService ordersService;
 
     @PostMapping(value = "/create")
-    @ApiOperation(value = "创建订单List", notes = "用于顾客下单（订单的标志位默认为0表示未完成订单）, 当id不为空时候，按照id更新订单，可以批量", response =
+    @ApiOperation(value = "创建订单List", notes = "用于顾客下单（订单的标志位默认为1表示准备状态）, 当id不为空时候，按照id更新订单，可以批量", response =
             Result.class)
     public Result<List<OrderVO>> create(@RequestBody List<OrderDTO> request) {
         return ordersService.createOrder(request);
@@ -46,9 +46,15 @@ public class OrderController {
         return ordersService.queryPage(request);
     }
 
-    @ApiOperation(value = "完成订单", notes = "把订单的标识为改为1，为订单已完成状态")
+    @ApiOperation(value = "完成订单", notes = "把订单的标识为改为3，为订单已完成状态")
     @GetMapping("/finish/{id}")
     public Result<OrderVO> finish(@PathVariable("id") String id) {
         return ordersService.finish(id);
+    }
+
+    @ApiOperation(value = "更改订单状态为配送中", notes = "需要传入订单id, 标志为改为2", response = Result.class)
+    @GetMapping("/delivering/{id}")
+    public Result<String> delivering(@PathVariable("id")String id){
+        return ordersService.delivering(id);
     }
 }
