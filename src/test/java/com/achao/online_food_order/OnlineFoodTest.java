@@ -11,5 +11,13 @@ public class OnlineFoodTest {
 
     public static void main(String[] args) {
         System.out.println(FINAL_MAP);
+        String a = "ab";
+        String b = a + new String("c");
+        String c = b;
+        System.out.println("b=" + b);
+        System.out.println("c=" + c);
+        c = "aaa";
+        System.out.println("b=" + b);
+        System.out.println("c=" + c);
     }
 }

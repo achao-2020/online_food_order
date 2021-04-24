@@ -12,6 +12,8 @@ public class StoreVO extends BaseVO {
     private static final long serialVersionUID = 7497763975036538780L;
     @ApiModelProperty(value = "商店名称")
     private String name;
+    @ApiModelProperty(value = "商店账号")
+    private String account;
     @ApiModelProperty(value = "商店描述")
     private String description;
     @ApiModelProperty(value = "商店位置")
