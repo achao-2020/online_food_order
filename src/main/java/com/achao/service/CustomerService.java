@@ -7,6 +7,7 @@ import com.achao.pojo.dto.CustomerUpdateDTO;
 import com.achao.pojo.dto.QueryPageDTO;
 import com.achao.pojo.po.AdminPO;
 import com.achao.pojo.vo.*;
+import com.achao.redis.RedisService;
 import com.achao.service.mapper.CustomerMapper;
 import com.achao.pojo.po.CustomerPO;
 import com.achao.utils.*;
@@ -16,13 +17,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author achao
+ */
 @Service(value = "customerService")
 @Slf4j
 public class CustomerService extends BaseService<CustomerMapper, CustomerPO, CustomerVO> {
+
+    @Resource
+    private RedisService redisService;
 
     public Result<CustomerVO> login(BaseLoginDTO dto) {
         if (StringUtils.isNullOrEmpty(dto.getAccount()) || StringUtils.isNullOrEmpty(dto.getPassword())) {
@@ -37,6 +45,8 @@ public class CustomerService extends BaseService<CustomerMapper, CustomerPO, Cus
         }
         CustomerVO customerVO = new CustomerVO();
         BeanUtils.copyProperties(customerTos.get(0), customerVO);
+        redisService.addLoginCache(customerVO.getId(), customerVO);
+        log.info(customerVO.getId());
         return ResponseUtil.simpleSuccessInfo(customerVO);
     }
 

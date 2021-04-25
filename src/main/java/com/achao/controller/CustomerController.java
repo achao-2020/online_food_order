@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -65,7 +66,6 @@ public class CustomerController {
     public Result<BasketVO> create(@RequestBody BasketDTO request) {
         return basketService.create(request);
     }
-
 
     /**
      * 这里决定使用协同过滤算法实现对用户的智能商品推荐（还没有完成）

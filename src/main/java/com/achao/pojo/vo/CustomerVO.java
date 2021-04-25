@@ -5,6 +5,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+/**
+ * @author achao
+ */
 @Data
 @ApiModel(value = "顾客传输对象")
 public class CustomerVO extends BaseVO{

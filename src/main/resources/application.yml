@@ -10,5 +10,16 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+
+#  redis配置
+  redis:
+    database: 0
+    host: 192.168.17.135
+    port: 6379
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 8
 #  profiles:
 #    active: dev
