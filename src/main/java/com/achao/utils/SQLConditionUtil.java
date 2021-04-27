@@ -62,6 +62,10 @@ public class SQLConditionUtil {
 
     public static void transferToWrapper(QueryWrapper wrapper, QueryPageDTO queryPageDTO) throws SQLException {
         List<SearchCriteriaPO> toes = queryPageDTO.getConditions();
+        if (toes == null || toes.size() == 0 && (queryPageDTO.getOrders() == null || queryPageDTO.getOrders().size() == 0)) {
+            wrapper = null;
+            return;
+        }
         // 构造查询条件
         if (toes != null && toes.size() > 0) {
             for (SearchCriteriaPO to : toes) {

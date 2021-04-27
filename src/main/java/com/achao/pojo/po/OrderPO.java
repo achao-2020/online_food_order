@@ -12,7 +12,7 @@ public class OrderPO extends BasePO {
      * status=1时候，表示订单完成，status=2表未付款, status=3表未完成
      */
     @TableField(value = "status", updateStrategy = FieldStrategy.NOT_EMPTY)
-    private String status;
+    private Integer status;
     @TableField(value = "customer_id", updateStrategy = FieldStrategy.NOT_EMPTY)
     private String customerId;
     @TableField(value = "store_id", updateStrategy = FieldStrategy.NOT_EMPTY)

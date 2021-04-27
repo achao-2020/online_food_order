@@ -1,5 +1,6 @@
 package com.achao.service;
 
+import com.achao.pojo.constant.Constant;
 import com.achao.pojo.constant.HttpStatus;
 import com.achao.pojo.dto.OrderDTO;
 import com.achao.pojo.dto.QueryPageDTO;
@@ -37,7 +38,7 @@ public class OrdersService extends BaseService<OrderMapper, OrderPO, OrderVO> {
     public Result<OrderVO> finish(String id) {
         OrderPO orderPO = new OrderPO();
         orderPO.setId(id);
-        orderPO.setStatus("1");
+        orderPO.setStatus(Constant.ORDER_FINISH);
         orderPO.setFinishTime(new Date());
         this.baseMapper.updateById(orderPO);
         orderPO = this.baseMapper.selectById(id);
@@ -60,7 +61,7 @@ public class OrdersService extends BaseService<OrderMapper, OrderPO, OrderVO> {
             if (StringUtils.isNullOrEmpty(dto.getId())) {
                 orderPO.setId("ord" + DateUtil.format(new Date()));
                 // 订单创建的时候是提交状态的状态
-                orderPO.setStatus("1");
+                orderPO.setStatus(Constant.ORDER_CREATE);
                 super.createCurrency(orderPO);
                 OrderVO orderVO = (OrderVO) super.getVo(new OrderVO(), orderPO);
                 rs.getInfo().add(orderVO);
@@ -105,7 +106,7 @@ public class OrdersService extends BaseService<OrderMapper, OrderPO, OrderVO> {
     public Result<String> delivering(String id) {
         OrderPO orderPO = new OrderPO();
         orderPO.setId(id);
-        orderPO.setStatus("2");
+        orderPO.setStatus(Constant.ORDER_DELIVERING);
         try {
             super.updateCurrency(orderPO);
         } catch (Exception e) {

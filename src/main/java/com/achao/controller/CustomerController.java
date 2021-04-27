@@ -55,7 +55,7 @@ public class CustomerController {
         return customerService.queryById(id);
     }
 
-    @ApiOperation(value = "按照条件分页显示顾客", notes = "按照条件查询分页显示", response = Result.class)
+    @ApiOperation(value = "按照条件分页显示顾客", notes = "按照条件查询分页显示, 条件为空的时候，搜索所有", response = Result.class)
     @PostMapping("/queryPage")
     public Result<PageVO> queryPage(@RequestBody QueryPageDTO request) {
         return customerService.queryPage(request);

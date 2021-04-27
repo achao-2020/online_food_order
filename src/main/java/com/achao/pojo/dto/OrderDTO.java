@@ -7,6 +7,9 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * @author achao
+ */
 @Data
 @ApiModel(value = "订单传输对象")
 public class OrderDTO extends BaseDTO{
