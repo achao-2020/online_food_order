@@ -67,6 +67,12 @@ public class CustomerController {
         return basketService.create(request);
     }
 
+    @ApiOperation(value = "查找附近的商店", notes = "分页查找附近的商店", response = Result.class)
+    @PostMapping("/nearbyStores")
+    public Result<PageVO> nearbyStores(@RequestBody LocationDTO request) {
+        return customerService.nearbyStores(request);
+    }
+
     /**
      * 这里决定使用协同过滤算法实现对用户的智能商品推荐（还没有完成）
      */

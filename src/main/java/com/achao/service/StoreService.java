@@ -53,16 +53,6 @@ public class StoreService extends BaseService<StoreMapper, StorePO, StoreVO> {
         BeanUtils.copyProperties(storeTo, storeVO);
         return ResponseUtil.simpleSuccessInfo(storeVO);
     }
-
-    /**
-     * 按条件查询商店，并分页
-     * @param storeDTOPage
-     * @return
-     */
-    
-    public IPage<StorePO> searchPageStores(StorePageDTO storeDTOPage) {
-        return null;
-    }
     
     public Result<StoreVO> login(BaseLoginDTO dto) {
         if (StringUtils.isNullOrEmpty(dto.getAccount()) || StringUtils.isNullOrEmpty(dto.getPassword())) {

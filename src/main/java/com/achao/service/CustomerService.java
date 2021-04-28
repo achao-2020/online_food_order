@@ -1,24 +1,20 @@
 package com.achao.service;
 
 import com.achao.pojo.constant.HttpStatus;
-import com.achao.pojo.dto.BaseLoginDTO;
-import com.achao.pojo.dto.CustomerDTO;
-import com.achao.pojo.dto.CustomerUpdateDTO;
-import com.achao.pojo.dto.QueryPageDTO;
-import com.achao.pojo.po.AdminPO;
+import com.achao.pojo.dto.*;
+import com.achao.pojo.po.StorePO;
 import com.achao.pojo.vo.*;
 import com.achao.redis.RedisService;
 import com.achao.service.mapper.CustomerMapper;
 import com.achao.pojo.po.CustomerPO;
 import com.achao.utils.*;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mysql.cj.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +24,9 @@ import java.util.List;
 @Service(value = "customerService")
 @Slf4j
 public class CustomerService extends BaseService<CustomerMapper, CustomerPO, CustomerVO> {
+
+    @Resource
+    private StoreService storeService;
 
     @Resource
     private RedisService redisService;
@@ -45,25 +44,12 @@ public class CustomerService extends BaseService<CustomerMapper, CustomerPO, Cus
         }
         CustomerVO customerVO = new CustomerVO();
         BeanUtils.copyProperties(customerTos.get(0), customerVO);
-        redisService.addLoginCache(customerVO.getId(), customerVO);
-        log.info(customerVO.getId());
         return ResponseUtil.simpleSuccessInfo(customerVO);
     }
 
     public void deleteById(String id) {
         this.baseMapper.deleteById(id);
     }
-
-
-    public Result<CustomerVO> updateCustomer(CustomerUpdateDTO dto) {
-        CustomerPO customerTo = new CustomerPO();
-        BeanUtils.copyProperties(dto, customerTo);
-        super.updateCurrency(customerTo);
-        CustomerVO customerVO = new CustomerVO();
-        BeanUtils.copyProperties(customerTo, customerVO);
-        return ResponseUtil.simpleSuccessInfo(customerVO);
-    }
-
 
     public Result<CustomerVO> createCustomer(CustomerDTO dto) {
         // 如果id为null或者为空的话，则增加一个customer
@@ -84,15 +70,6 @@ public class CustomerService extends BaseService<CustomerMapper, CustomerPO, Cus
         return ResponseUtil.simpleSuccessInfo(customerVO);
     }
 
-    private Result<List<CustomerVO>> search(CustomerDTO dto) {
-        dto.setId(null);
-        CustomerPO customerPO = new CustomerPO();
-        BeanUtils.copyProperties(dto, customerPO);
-        List<CustomerPO> customerPOS = super.searchCurrency(customerPO);
-        List<CustomerVO> list = GeneralConv.convert2List(customerPOS, CustomerVO.class);
-        return ResponseUtil.simpleSuccessInfo(list);
-    }
-
     public Result<CustomerVO> queryById(String id) {
         CustomerPO customerPO = this.baseMapper.selectById(id);
         CustomerVO customerVO = new CustomerVO();
@@ -102,5 +79,40 @@ public class CustomerService extends BaseService<CustomerMapper, CustomerPO, Cus
 
     public Result<PageVO> queryPage(QueryPageDTO request) {
         return super.searchPageCurrency(request, CustomerPO.class, CustomerVO.class);
+    }
+
+    public Result<PageVO> nearbyStores(LocationDTO locationDTO) {
+        List<BaseVO> stores = GeneralConv.convert2List(storeService.searchCurrency(new StorePO()), StoreVO.class);
+        // redis缓存结果集和位置信息
+        redisService.addResultToGeo(stores);
+        List<StoreVO> storeVOS = redisService.queryNearbyStores(new Point(locationDTO.getLongitude(),
+                        locationDTO.getLatitude()),
+                locationDTO.getRadius());
+        PageVO<StoreVO> pageVO = new PageVO();
+        Long current = locationDTO.getCurrent();
+        Long size = locationDTO.getSize();
+        int resultSize = storeVOS.size();
+        if (size >= resultSize) {
+            pageVO.setCurrent(1L);
+            pageVO.setSize((long) resultSize);
+            pageVO.setTotal((long) resultSize);
+            pageVO.setInfos(storeVOS);
+            return ResponseUtil.simpleSuccessInfo(pageVO);
+        }
+        int totalPage = (int) Math.ceil(resultSize / size.doubleValue());
+        int start = (int) ((current - 1) * size);
+        int end = 0;
+        List<StoreVO> vos = null;
+        if (current == totalPage) {
+            vos = storeVOS.subList(start, resultSize);
+        } else {
+            end = Math.toIntExact(size * current);
+            vos = storeVOS.subList(start, end);
+        }
+        pageVO.setCurrent(current);
+        pageVO.setSize((long) vos.size());
+        pageVO.setTotal((long) resultSize);
+        pageVO.setInfos(vos);
+        return ResponseUtil.simpleSuccessInfo(pageVO);
     }
 }

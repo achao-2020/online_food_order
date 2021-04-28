@@ -1,13 +1,15 @@
 package com.achao.utils;
 
-import ch.qos.logback.core.util.TimeUtil;
+import com.achao.pojo.constant.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.*;
+import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -553,5 +555,41 @@ public class RedisUtils {
             e.printStackTrace();
             return 0;
         }
+    }
+
+    /**
+     * 添加经纬度
+     *
+     * @param id
+     * @param longitude
+     * @param latitude
+     * @return
+     */
+    public boolean geoSet(String key, String id, double longitude, double latitude) {
+        Point point = new Point(longitude, latitude);
+        try {
+            redisTemplate.opsForGeo().add(key, point, id);
+            return true;
+        } catch (Exception e) {
+            log.error("添加位置数据失败，请检查数据的合法性！", e);
+            return false;
+        }
+    }
+
+    /**
+     * 查找半径范围内的数据，返回gKey
+     *
+     * @param point
+     * @param key
+     * @return
+     */
+    public List<org.springframework.data.geo.GeoResult<RedisGeoCommands.GeoLocation<Object>>> geoGetNear(Point point, String key, double radius) {
+        Circle circle = new Circle(point, new Distance(radius, Metrics.KILOMETERS));
+        if (StringUtils.isEmpty(key)) {
+            key = Constant.LOCATION_STORE;
+        }
+        GeoResults<RedisGeoCommands.GeoLocation<Object>> results = redisTemplate.opsForGeo().radius(key
+                , circle);
+        return results.getContent();
     }
 }

@@ -33,6 +33,9 @@ public class GeneralConv {
      * 安装dto中的条件装换成为wrapper
      */
     public static <T> QueryWrapper<T> convQueryWrapper(T entity) throws IllegalAccessException {
+        if (entity == null) {
+            return null;
+        }
         QueryWrapper<T> wrapper = new QueryWrapper<>();
         Field[] fields = entity.getClass().getDeclaredFields();
         for (int i = 0; i < fields.length; i++) {
