@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -59,5 +60,11 @@ public class StoreController {
     @PostMapping("/searchBill")
     public Result<PageVO> searchBill(@RequestBody BillPageDTO request) {
         return storeBillService.searchPage(request);
+    }
+
+    @ApiOperation(value = "根据名称搜索商店,自动补充商店名", notes = "拥有自动填充的功能, 返回热度搜索词从大到小排序", response = Set.class)
+    @GetMapping("/queryPageByName")
+    public Set<Object> queryPageByName(String name) {
+        return storeService.queryPageByName(name);
     }
 }

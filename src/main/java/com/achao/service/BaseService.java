@@ -16,7 +16,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.mysql.cj.util.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,7 +127,7 @@ public abstract class BaseService< E extends BaseMapper, T extends BasePO, D ext
         QueryPageDTO pageDTO = new QueryPageDTO();
         BeanUtils.copyProperties(billPageDTO, pageDTO);
         pageDTO.setConditions(new ArrayList<>());
-        if (!StringUtils.isNullOrEmpty(billPageDTO.getOrderId())) {
+        if (!StringUtils.isBlank(billPageDTO.getOrderId())) {
             pageDTO.getConditions().add(new SearchCriteriaPO("order_id", billPageDTO.getOrderId(), "="));
         }
         if (billPageDTO.getStartDate() != null) {

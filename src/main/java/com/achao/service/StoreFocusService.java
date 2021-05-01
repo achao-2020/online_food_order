@@ -11,7 +11,7 @@ import com.achao.utils.DateUtil;
 import com.achao.utils.GeneralConv;
 import com.achao.utils.ResponseUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.mysql.cj.util.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class StoreFocusService extends BaseService<StoreFocusMapper, StoreFocusP
         Result<List<StoreFocusVO>> rs = new Result<>();
         dtos.forEach(dto -> {
             // 如果id为null或者为空，则增加一个comment
-            if (StringUtils.isNullOrEmpty(dto.getId())) {
+            if (StringUtils.isBlank(dto.getId())) {
                 StoreFocusPO focusPO = (StoreFocusPO) super.getTo(new StoreFocusPO(), dto);
                 focusPO.setId("foc" + DateUtil.format(new Date()));
                 super.createCurrency(focusPO);

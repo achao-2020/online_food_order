@@ -2,14 +2,11 @@ package com.achao.service;
 
 import com.achao.pojo.dto.BillPageDTO;
 import com.achao.pojo.dto.QueryPageDTO;
-import com.achao.pojo.po.OrderPO;
-import com.achao.pojo.po.SearchCriteriaPO;
-import com.achao.pojo.po.StoreBillPO;
-import com.achao.pojo.po.StorePO;
+import com.achao.pojo.po.*;
 import com.achao.pojo.vo.*;
 import com.achao.service.mapper.StoreBillMapper;
 import com.achao.utils.DateUtil;
-import com.mysql.cj.util.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -27,11 +24,14 @@ public class StoreBillService extends BaseService<StoreBillMapper, StoreBillPO, 
     private DishesService dishesService;
 
     @Resource
+    private OrderRefDishService orderRefDishService;
+
+    @Resource
     private StoreService storeService;
 
     public Result<PageVO> searchPage(BillPageDTO billPageDTO) {
         QueryPageDTO queryPage = super.getQueryPage(billPageDTO);
-        if (!StringUtils.isNullOrEmpty(billPageDTO.getId())) {
+        if (!StringUtils.isBlank(billPageDTO.getId())) {
             queryPage.getConditions().add(new SearchCriteriaPO("store_id", billPageDTO.getId(), "="));
         }
         return super.searchPageCurrency(queryPage, StoreBillPO.class, StoreBillVO.class);
@@ -40,16 +40,23 @@ public class StoreBillService extends BaseService<StoreBillMapper, StoreBillPO, 
     @Override
     public void addBill(OrderPO orderPO) {
         log.info("正在更新商店的账单信息");
-        DishesVO dishesVO = dishesService.queryById(orderPO.getDishesId()).getInfo();
-        String name = storeService.queryById(dishesVO.getStoreId()).getInfo().getName();
+        String storeId = getStoreId(orderPO);
+        BigDecimal priceTotal = orderRefDishService.getOrderPrice(orderPO.getId());
+        String name = storeService.queryById(storeId).getInfo().getName();
         StoreBillPO storeBillPO = new StoreBillPO();
         storeBillPO.setId("sbil" + DateUtil.format(new Date()));
-        storeBillPO.setStoreId(dishesVO.getStoreId());
+        storeBillPO.setStoreId(storeId);
         storeBillPO.setStoreName(name);
         storeBillPO.setOrderId(orderPO.getId());
-        storeBillPO.setIncome(dishesVO.getPrice());
-        storeBillPO.setStoreIncome(dishesVO.getPrice().multiply(new BigDecimal(0.8 - 0.01)));
-        storeBillPO.setServiceFee(dishesVO.getPrice().multiply(new BigDecimal(0.01)));
+        storeBillPO.setIncome(priceTotal);
+        storeBillPO.setStoreIncome(priceTotal.multiply(new BigDecimal(0.8 - 0.01)));
+        storeBillPO.setServiceFee(priceTotal.multiply(new BigDecimal(0.01)));
         super.createCurrency(storeBillPO);
+    }
+
+    private String getStoreId(OrderPO orderPO) {
+        OrderRefDishesPO po = new OrderRefDishesPO();
+        po.setOrderId(orderPO.getId());
+        return orderRefDishService.searchCurrency(po).get(0).getStoreId();
     }
 }

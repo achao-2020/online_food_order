@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -565,10 +566,11 @@ public class RedisUtils {
      * @param latitude
      * @return
      */
-    public boolean geoSet(String key, String id, double longitude, double latitude) {
+    public boolean geoSet(String key, String id, double longitude, double latitude, long time) {
         Point point = new Point(longitude, latitude);
         try {
             redisTemplate.opsForGeo().add(key, point, id);
+            redisTemplate.expire(key, time, TimeUnit.SECONDS);
             return true;
         } catch (Exception e) {
             log.error("添加位置数据失败，请检查数据的合法性！", e);
@@ -591,5 +593,28 @@ public class RedisUtils {
         GeoResults<RedisGeoCommands.GeoLocation<Object>> results = redisTemplate.opsForGeo().radius(key
                 , circle);
         return results.getContent();
+    }
+
+    /**
+     * 往zSet中添加数据
+     * @param key
+     * @param value
+     * @param score
+     * @return
+     */
+    public boolean zSetAdd(String key, String value, double score) {
+        if (!hasKey(key)) {
+            redisTemplate.opsForZSet().add(key, value, score);
+            redisTemplate.expire(key, Constant.REDIS_DEFOULT_EXPIRE_TIME, TimeUnit.SECONDS);
+        } else {
+            // 创建并增加分值
+            redisTemplate.opsForZSet().incrementScore(key, value, score);
+        }
+        return true;
+    }
+
+    public Set<Object> zSetGet(String key) {
+        Set<Object> range = redisTemplate.opsForZSet().reverseRange(key, 0, 10);
+        return range;
     }
 }

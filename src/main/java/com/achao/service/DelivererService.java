@@ -3,10 +3,7 @@ package com.achao.service;
 import com.achao.pojo.constant.HttpStatus;
 import com.achao.pojo.dto.*;
 import com.achao.pojo.po.*;
-import com.achao.pojo.vo.CustomerVO;
-import com.achao.pojo.vo.DelivererVO;
-import com.achao.pojo.vo.PageVO;
-import com.achao.pojo.vo.Result;
+import com.achao.pojo.vo.*;
 import com.achao.service.mapper.DelivererMapper;
 import com.achao.service.mapper.OrderMapper;
 import com.achao.utils.DateUtil;
@@ -15,7 +12,7 @@ import com.achao.utils.ResponseUtil;
 import com.achao.utils.SQLConditionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.mysql.cj.util.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.DateUtils;
 import org.springframework.beans.BeanUtils;
@@ -38,7 +35,7 @@ public class DelivererService extends BaseService<DelivererMapper, DelivererPO, 
 
     public Result<DelivererVO> createDeliver(DelivererDTO dto) {
         // 如果配送员的id为空，则创建一个配送员
-        if (StringUtils.isNullOrEmpty(dto.getId())) {
+        if (StringUtils.isBlank(dto.getId())) {
             DelivererPO delivererPO = (DelivererPO) super.getTo(new DelivererPO(), dto);
             delivererPO.setId("deli" + DateUtil.format(new Date()));
             super.createCurrency(delivererPO);
@@ -76,7 +73,7 @@ public class DelivererService extends BaseService<DelivererMapper, DelivererPO, 
     }
 
     public Result<DelivererVO> login(BaseLoginDTO dto) {
-        if (StringUtils.isNullOrEmpty(dto.getAccount()) || StringUtils.isNullOrEmpty(dto.getPassword())) {
+        if (StringUtils.isBlank(dto.getAccount()) || StringUtils.isBlank(dto.getPassword())) {
             log.error("账号或者密码不能为空");
             return ResponseUtil.simpleFail(HttpStatus.FORBIDDEN, "账号，密码不能为空！");
         }
@@ -133,4 +130,7 @@ public class DelivererService extends BaseService<DelivererMapper, DelivererPO, 
         ordersService.setDeliverId(orderId, deliverId);
     }
 
+    public Result<DeliverLocationVO> deliverTrail(String id) {
+        return null;
+    }
 }

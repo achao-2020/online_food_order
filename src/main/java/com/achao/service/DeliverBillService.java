@@ -12,7 +12,7 @@ import com.achao.pojo.vo.PageVO;
 import com.achao.pojo.vo.Result;
 import com.achao.service.mapper.DeliverBillMapper;
 import com.achao.utils.DateUtil;
-import com.mysql.cj.util.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -32,26 +32,27 @@ public class DeliverBillService extends BaseService<DeliverBillMapper, DeliverBi
     private DelivererService delivererService;
 
     @Resource
-    private DishesService dishesService;
+    private OrderRefDishService orderRefDishService;
 
     @Override
     protected void addBill(OrderPO orderPO) {
         log.info("正在更新配送员的账单信息");
         log.info("正在更新商店的账单信息");
-        DishesVO dishesVO = dishesService.queryById(orderPO.getDishesId()).getInfo();
         String name = delivererService.queryById(orderPO.getDeliveredId()).getInfo().getName();
+        BigDecimal priceTotal = orderRefDishService.getOrderPrice(orderPO.getId());
         DeliverBillPO deliverBillPO = new DeliverBillPO();
+        deliverBillPO.setOrderId(orderPO.getId());
         deliverBillPO.setId("dbill" + DateUtil.format(new Date()));
         deliverBillPO.setDeliverId(orderPO.getDeliveredId());
         deliverBillPO.setDeliverName(name);
-        deliverBillPO.setIncome(dishesVO.getPrice().multiply(new BigDecimal(0.2 - 0.005)));
-        deliverBillPO.setServiceFee(dishesVO.getPrice().multiply(new BigDecimal(0.005)));
+        deliverBillPO.setIncome(priceTotal.multiply(new BigDecimal(0.2 - 0.005)));
+        deliverBillPO.setServiceFee(priceTotal.multiply(new BigDecimal(0.005)));
         super.createCurrency(deliverBillPO);
     }
 
     public Result<PageVO> searchBillPage(BillPageDTO billPageDTO) {
         QueryPageDTO pageDTO = super.getQueryPage(billPageDTO);
-        if (!StringUtils.isNullOrEmpty(billPageDTO.getId())) {
+        if (!StringUtils.isBlank(billPageDTO.getId())) {
             pageDTO.getConditions().add(new SearchCriteriaPO("deliver_id", billPageDTO.getId(), "="));
         }
         return super.searchPageCurrency(pageDTO, DeliverBillPO.class, DeliverBillVO.class);

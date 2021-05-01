@@ -8,7 +8,7 @@ import com.achao.pojo.vo.Result;
 import com.achao.service.mapper.BasketMapper;
 import com.achao.utils.DateUtil;
 import com.achao.utils.ResponseUtil;
-import com.mysql.cj.util.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ import java.util.Date;
 public class BasketService extends BaseService<BasketMapper, BasketPO, BasketVO>{
     public Result<BasketVO> create(BasketDTO dto) {
         // 如果id为null或者为空的话，则增加一个customer
-        if (StringUtils.isNullOrEmpty(dto.getId())) {
+        if (StringUtils.isBlank(dto.getId())) {
             BasketPO basketPO = (BasketPO) super.getTo(new BasketPO(), dto);
             basketPO.setId("bas" + DateUtil.format(new Date()));
             super.createCurrency(basketPO);

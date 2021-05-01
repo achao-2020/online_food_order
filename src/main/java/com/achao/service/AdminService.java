@@ -2,33 +2,32 @@ package com.achao.service;
 
 import com.achao.pojo.constant.HttpStatus;
 import com.achao.pojo.dto.AdminDTO;
-import com.achao.pojo.dto.AdminUpdateDTO;
 import com.achao.pojo.dto.BaseLoginDTO;
 import com.achao.pojo.dto.QueryPageDTO;
-import com.achao.pojo.po.*;
+import com.achao.pojo.po.AdminPO;
 import com.achao.pojo.vo.AdminVO;
-import com.achao.pojo.vo.DelivererVO;
 import com.achao.pojo.vo.PageVO;
 import com.achao.pojo.vo.Result;
-import com.achao.service.mapper.*;
+import com.achao.service.mapper.AdminMapper;
 import com.achao.utils.DateUtil;
-import com.achao.utils.GeneralConv;
 import com.achao.utils.ResponseUtil;
-import com.mysql.cj.util.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author achao
+ */
 @Slf4j
 @Service
 public class AdminService extends BaseService<AdminMapper, AdminPO, AdminVO> {
 
     public Result<AdminVO> login(BaseLoginDTO dto) {
-        if (StringUtils.isNullOrEmpty(dto.getAccount()) || StringUtils.isNullOrEmpty(dto.getPassword())) {
+        if (StringUtils.isBlank(dto.getAccount()) || StringUtils.isBlank(dto.getPassword())) {
             log.error("账号或者密码不能为空");
             return ResponseUtil.simpleFail(HttpStatus.FORBIDDEN, "账号，密码不能为空！");
         }
@@ -45,7 +44,7 @@ public class AdminService extends BaseService<AdminMapper, AdminPO, AdminVO> {
 
     public Result<AdminVO> createAdmin(AdminDTO dto) {
         // 如果id为null或者为空，则增加一个admin
-        if (StringUtils.isNullOrEmpty(dto.getId())) {
+        if (StringUtils.isBlank(dto.getId())) {
             AdminPO adminPO = (AdminPO) super.getTo(new AdminPO(), dto);
             adminPO.setId("adm" + DateUtil.format(new Date()));
             super.createCurrency(adminPO);

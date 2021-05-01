@@ -8,7 +8,7 @@ import com.achao.redis.RedisService;
 import com.achao.service.mapper.CustomerMapper;
 import com.achao.pojo.po.CustomerPO;
 import com.achao.utils.*;
-import com.mysql.cj.util.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.geo.Point;
@@ -32,7 +32,7 @@ public class CustomerService extends BaseService<CustomerMapper, CustomerPO, Cus
     private RedisService redisService;
 
     public Result<CustomerVO> login(BaseLoginDTO dto) {
-        if (StringUtils.isNullOrEmpty(dto.getAccount()) || StringUtils.isNullOrEmpty(dto.getPassword())) {
+        if (StringUtils.isBlank(dto.getAccount()) || StringUtils.isBlank(dto.getPassword())) {
             log.error("账号或者密码不能为空");
             return ResponseUtil.simpleFail(HttpStatus.FORBIDDEN, "账号，密码不能为空！");
         }
@@ -53,7 +53,7 @@ public class CustomerService extends BaseService<CustomerMapper, CustomerPO, Cus
 
     public Result<CustomerVO> createCustomer(CustomerDTO dto) {
         // 如果id为null或者为空的话，则增加一个customer
-        if (StringUtils.isNullOrEmpty(dto.getId())) {
+        if (StringUtils.isBlank(dto.getId())) {
             CustomerPO customerPO = (CustomerPO) super.getTo(new CustomerPO(), dto);
             customerPO.setId("cus" + DateUtil.format(new Date()));
             super.createCurrency(customerPO);
@@ -90,8 +90,11 @@ public class CustomerService extends BaseService<CustomerMapper, CustomerPO, Cus
                 locationDTO.getRadius());
         PageVO<StoreVO> pageVO = new PageVO();
         Long current = locationDTO.getCurrent();
+        // 请求页面大小
         Long size = locationDTO.getSize();
+        // 结果集大小
         int resultSize = storeVOS.size();
+        // 如果请求的页面大小大于等于返回结果集大小，则返回所有数据
         if (size >= resultSize) {
             pageVO.setCurrent(1L);
             pageVO.setSize((long) resultSize);
@@ -99,16 +102,21 @@ public class CustomerService extends BaseService<CustomerMapper, CustomerPO, Cus
             pageVO.setInfos(storeVOS);
             return ResponseUtil.simpleSuccessInfo(pageVO);
         }
+        // 同页面大小
         int totalPage = (int) Math.ceil(resultSize / size.doubleValue());
+        // 计算当前页面的开始位置
         int start = (int) ((current - 1) * size);
         int end = 0;
         List<StoreVO> vos = null;
+        // 当前页面为最后一页
         if (current == totalPage) {
             vos = storeVOS.subList(start, resultSize);
         } else {
+            // 计算当前页面的最后一页位置
             end = Math.toIntExact(size * current);
             vos = storeVOS.subList(start, end);
         }
+        // 设置参数
         pageVO.setCurrent(current);
         pageVO.setSize((long) vos.size());
         pageVO.setTotal((long) resultSize);

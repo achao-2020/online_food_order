@@ -14,6 +14,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author achao
@@ -36,9 +38,9 @@ public class RedisService {
             if (results.get(0) instanceof StoreVO) {
                 results.forEach(result -> {
                     StoreVO storeVO = (StoreVO) result;
-                    redisUtils.hset(Constant.STORE_QUERY_RESULT, storeVO.getId(), storeVO);
+                    redisUtils.hset(Constant.STORE_QUERY_RESULT, storeVO.getId(), storeVO, Constant.REDIS_DEFOULT_EXPIRE_TIME);
                     redisUtils.geoSet(Constant.LOCATION_STORE, storeVO.getId(), storeVO.getLongitude(),
-                            storeVO.getLatitude());
+                            storeVO.getLatitude(), Constant.REDIS_DEFOULT_EXPIRE_TIME);
                 });
             }
         }
@@ -56,5 +58,18 @@ public class RedisService {
             }
         }
         return rst;
+    }
+
+    public void addHotDishName(String key, String value) {
+        try {
+            redisUtils.zSetAdd(key, value, 1);
+            log.info("保存热点餐品名称成功！name:" + value);
+        } catch(Exception e) {
+            log.error("保存热点餐品名称失败");
+        }
+    }
+
+    public Set<Object> queryHostName(String key) {
+        return redisUtils.zSetGet(key);
     }
 }

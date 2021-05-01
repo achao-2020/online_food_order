@@ -1,22 +1,26 @@
 package com.achao.service;
 
+import com.achao.pojo.constant.Constant;
 import com.achao.pojo.constant.HttpStatus;
 import com.achao.pojo.dto.*;
 import com.achao.pojo.po.StorePO;
 import com.achao.pojo.vo.PageVO;
 import com.achao.pojo.vo.Result;
 import com.achao.pojo.vo.StoreVO;
+import com.achao.redis.RedisService;
 import com.achao.service.mapper.StoreMapper;
 import com.achao.utils.DateUtil;
 import com.achao.utils.ResponseUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.mysql.cj.util.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author achao
@@ -25,9 +29,12 @@ import java.util.List;
 @Service("storeService")
 public class StoreService extends BaseService<StoreMapper, StorePO, StoreVO> {
 
+    @Autowired
+    private RedisService redisService;
+
     public Result<StoreVO> createStore(StoreDTO dto) {
         // 如果id为null或者为空，则增加一个store
-        if (StringUtils.isNullOrEmpty(dto.getId())) {
+        if (StringUtils.isBlank(dto.getId())) {
             StorePO storePO = (StorePO) super.getTo(new StorePO(), dto);
             storePO.setId("sto" + DateUtil.format(new Date()));
             super.createCurrency(storePO);
@@ -55,7 +62,7 @@ public class StoreService extends BaseService<StoreMapper, StorePO, StoreVO> {
     }
     
     public Result<StoreVO> login(BaseLoginDTO dto) {
-        if (StringUtils.isNullOrEmpty(dto.getAccount()) || StringUtils.isNullOrEmpty(dto.getPassword())) {
+        if (StringUtils.isBlank(dto.getAccount()) || StringUtils.isBlank(dto.getPassword())) {
             log.error("账号或者密码不能为空");
             return ResponseUtil.simpleFail(HttpStatus.FORBIDDEN, "账号，密码不能为空！");
         }
@@ -86,5 +93,10 @@ public class StoreService extends BaseService<StoreMapper, StorePO, StoreVO> {
 
     public Result<PageVO> queryPage(QueryPageDTO request) {
         return super.searchPageCurrency(request, StorePO.class, StoreVO.class);
+    }
+
+    public Set<Object> queryPageByName(String name) {
+        String key = Constant.HOST_STORE_NAME + name;
+        return redisService.queryHostName(key);
     }
 }

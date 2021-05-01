@@ -14,7 +14,7 @@ import com.achao.utils.DateUtil;
 import com.achao.utils.ResponseUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.mysql.cj.util.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -36,7 +36,7 @@ public class CommentService extends BaseService<CommentMapper, CommentPO, Commen
 
     public Result<CommentVO> create(CommentDTO dto) {
         // 如果id为null或者为空，则增加一个comment
-        if (StringUtils.isNullOrEmpty(dto.getId())) {
+        if (StringUtils.isBlank(dto.getId())) {
             CommentPO commentPO = (CommentPO) super.getTo(new CommentPO(), dto);
             commentPO.setId("com" + DateUtil.format(new Date()));
             super.createCurrency(commentPO);

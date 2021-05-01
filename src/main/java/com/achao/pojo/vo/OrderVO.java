@@ -5,7 +5,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
+/**
+ * @author achao
+ */
 @Data
 @ApiModel(value = "订单视图实体类", description = "用于显示订单的信息")
 public class OrderVO extends BaseVO{
@@ -18,8 +22,8 @@ public class OrderVO extends BaseVO{
     private Integer status;
     @ApiModelProperty(value = "customerId", notes = "订单关联顾客id")
     private String customerId;
-    @ApiModelProperty(value = "dishesId", notes = "餐品id")
-    private String dishesId;
+    @ApiModelProperty(value = "dishes", notes = "订单关联餐品列表")
+    private List<DishesVO> dishes;
     @ApiModelProperty(value = "storeId", notes = "订单关联商店id")
     private String storeId;
     @ApiModelProperty(value = "deliveredId", notes = "订单关联配送员id")

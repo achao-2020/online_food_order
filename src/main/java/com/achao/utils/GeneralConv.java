@@ -1,6 +1,7 @@
 package com.achao.utils;
 
 import com.achao.annoation.NotReflect;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
@@ -45,7 +46,7 @@ public class GeneralConv {
                 if (field.get(entity) instanceof String && ((String) field.get(entity)).length() == 0) {
                     continue;
                 }
-                String column = changeToJavaFiled(field.getName());
+                String column  = field.getAnnotation(TableField.class).value();
                 wrapper.eq(column, field.get(entity));
             }
             ;

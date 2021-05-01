@@ -24,7 +24,7 @@ public class OrderController {
     @PostMapping(value = "/create")
     @ApiOperation(value = "创建订单List", notes = "用于顾客下单（订单的标志位默认为1表示准备状态）, 当id不为空时候，按照id更新订单，可以批量", response =
             Result.class)
-    public Result<List<OrderVO>> create(@RequestBody List<OrderDTO> request) {
+    public Result<OrderVO> create(@RequestBody OrderDTO request) {
         return ordersService.createOrder(request);
     }
 

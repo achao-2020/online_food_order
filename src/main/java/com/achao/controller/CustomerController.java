@@ -5,6 +5,7 @@ import com.achao.pojo.po.StorePO;
 import com.achao.pojo.vo.*;
 import com.achao.service.BasketService;
 import com.achao.service.CustomerService;
+import com.achao.service.DelivererService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,9 @@ public class CustomerController {
 
     @Autowired
     private BasketService basketService;
+
+    @Autowired
+    private DelivererService delivererService;
 
     @PostMapping("/login")
     @ApiOperation(value = "顾客登陆", notes = "顾客登陆，提供用户密码", response = Result.class)
@@ -71,6 +75,12 @@ public class CustomerController {
     @PostMapping("/nearbyStores")
     public Result<PageVO> nearbyStores(@RequestBody LocationDTO request) {
         return customerService.nearbyStores(request);
+    }
+
+    @ApiOperation(value = "查询配送员订单配送轨迹", notes = "通过订单查看配送员的配送轨迹", response = Result.class)
+    @PostMapping("/deliverTrail/{id}")
+    public Result<DeliverLocationVO> deliverTrail(@PathVariable("id") String id) {
+        return delivererService.deliverTrail(id);
     }
 
     /**

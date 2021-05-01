@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * @author achao
+ */
 @Data
 @TableName("`order`")
 public class OrderPO extends BasePO {
@@ -15,12 +18,10 @@ public class OrderPO extends BasePO {
     private Integer status;
     @TableField(value = "customer_id", updateStrategy = FieldStrategy.NOT_EMPTY)
     private String customerId;
-    @TableField(value = "store_id", updateStrategy = FieldStrategy.NOT_EMPTY)
-    private String storeId;
     @TableField(value = "delivered_id", updateStrategy = FieldStrategy.NOT_EMPTY)
     private String deliveredId;
-    @TableField(value = "dishes_id", updateStrategy = FieldStrategy.NOT_EMPTY)
-    private String dishesId;
+    @TableField(value = "store_id", updateStrategy = FieldStrategy.NOT_EMPTY)
+    private String storeId;
     @TableField(value = "finish_time", updateStrategy = FieldStrategy.NOT_EMPTY)
     private Date finishTime;
 }

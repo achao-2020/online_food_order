@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Slf4j
 @Api(value = "餐品对外接口", description = "提供餐品的接口服务")
@@ -44,5 +46,11 @@ public class DishesController {
     @PostMapping("/queryPage")
     public Result<PageVO> queryPage(@RequestBody QueryPageDTO request) {
         return dishesService.queryPage(request);
+    }
+
+    @ApiOperation(value = "根据名称搜索餐品,自动补充餐品名", notes = "拥有自动填充的功能, 返回热度搜索词从大到小排序", response = Set.class)
+    @GetMapping("/queryByName")
+    public Set<Object> queryPageByName(String name) {
+        return dishesService.queryByName(name);
     }
 }
