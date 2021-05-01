@@ -1,8 +1,8 @@
 package com.achao.online_food_order;
 
-import com.achao.pojo.dto.AdminDTO;
-import com.achao.pojo.vo.AdminVO;
-import com.achao.pojo.vo.Result;
+import com.achao.sdk.pojo.dto.AdminDTO;
+import com.achao.sdk.pojo.vo.AdminVO;
+import com.achao.sdk.pojo.vo.Result;
 import com.achao.service.AdminService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

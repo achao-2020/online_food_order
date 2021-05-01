@@ -1,6 +1,6 @@
 package com.achao.service.mapper;
 
-import com.achao.pojo.po.DelivererPO;
+import com.achao.sdk.pojo.po.DelivererPO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.stereotype.Component;
 

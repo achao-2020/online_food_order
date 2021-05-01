@@ -1,9 +1,9 @@
 package com.achao.redis;
 
-import com.achao.pojo.constant.Constant;
-import com.achao.pojo.vo.BaseVO;
-import com.achao.pojo.vo.StoreVO;
-import com.achao.utils.RedisUtils;
+import com.achao.sdk.pojo.constant.Constant;
+import com.achao.sdk.pojo.vo.BaseVO;
+import com.achao.sdk.pojo.vo.StoreVO;
+import com.achao.sdk.utils.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.GeoResult;

@@ -1,24 +1,23 @@
 package com.achao.service;
-
-import com.achao.pojo.constant.Constant;
-import com.achao.pojo.constant.HttpStatus;
-import com.achao.pojo.dto.OrderDTO;
-import com.achao.pojo.dto.QueryPageDTO;
-import com.achao.pojo.po.OrderPO;
-import com.achao.pojo.po.OrderRefDishesPO;
-import com.achao.pojo.vo.*;
+import com.achao.sdk.pojo.constant.Constant;
+import com.achao.sdk.pojo.constant.HttpStatus;
+import com.achao.sdk.pojo.dto.OrderDTO;
+import com.achao.sdk.pojo.dto.QueryPageDTO;
+import com.achao.sdk.pojo.po.OrderPO;
+import com.achao.sdk.pojo.vo.DishesVO;
+import com.achao.sdk.pojo.vo.OrderVO;
+import com.achao.sdk.pojo.vo.PageVO;
+import com.achao.sdk.pojo.vo.Result;
+import com.achao.sdk.utils.DateUtil;
+import com.achao.sdk.utils.ResponseUtil;
 import com.achao.service.mapper.OrderMapper;
-import com.achao.utils.DateUtil;
-import com.achao.utils.ResponseUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -94,6 +93,9 @@ public class OrdersService extends BaseService<OrderMapper, OrderPO, OrderVO> {
     public Result<OrderVO> queryById(String id) {
         OrderPO orderPO = this.baseMapper.selectById(id);
         List<DishesVO> dishes = orderRefDishService.getDishesByOrderId(orderPO.getId());
+        if (CollectionUtils.isEmpty(dishes)) {
+            return null;
+        }
         OrderVO orderVO = (OrderVO) super.getVo(new OrderVO(), orderPO);
         orderVO.setDishes(dishes);
         return ResponseUtil.simpleSuccessInfo(orderVO);

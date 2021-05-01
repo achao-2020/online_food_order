@@ -1,33 +1,32 @@
 package com.achao.service;
 
-import com.achao.pojo.constant.HttpStatus;
-import com.achao.pojo.constant.ServiceMapper;
-import com.achao.pojo.dto.BaseDTO;
-import com.achao.pojo.dto.BillPageDTO;
-import com.achao.pojo.dto.QueryPageDTO;
-import com.achao.pojo.po.BasePO;
-import com.achao.pojo.po.OrderPO;
-import com.achao.pojo.po.SearchCriteriaPO;
-import com.achao.pojo.vo.BaseVO;
-import com.achao.pojo.vo.PageVO;
-import com.achao.pojo.vo.Result;
-import com.achao.utils.*;
+import com.achao.sdk.pojo.constant.HttpStatus;
+import com.achao.sdk.pojo.dto.BaseDTO;
+import com.achao.sdk.pojo.dto.BillPageDTO;
+import com.achao.sdk.pojo.dto.QueryPageDTO;
+import com.achao.sdk.pojo.dto.SearchCriteriaPO;
+import com.achao.sdk.pojo.po.BasePO;
+import com.achao.sdk.pojo.po.OrderPO;
+import com.achao.sdk.pojo.vo.BaseVO;
+import com.achao.sdk.pojo.vo.PageVO;
+import com.achao.sdk.pojo.vo.Result;
+import com.achao.sdk.utils.GeneralConv;
+import com.achao.sdk.utils.ResponseUtil;
+import com.achao.sdk.utils.SQLConditionUtil;
+import com.achao.sdk.utils.SpringUtil;
+import com.achao.service.mapper.ServiceMapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.reflect.generics.tree.BaseType;
 
-import javax.annotation.Resource;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service("baseService")
@@ -42,7 +41,7 @@ public abstract class BaseService< E extends BaseMapper, T extends BasePO, D ext
     @Autowired
     private StoreBillService storeBillService;
 
-    public Result<PageVO>  searchPageCurrency(QueryPageDTO dto, Class<T> tClass, Class<D> dClass) {
+    public Result<PageVO> searchPageCurrency(QueryPageDTO dto, Class<T> tClass, Class<D> dClass) {
         IPage<T> page = new Page<>();
         QueryWrapper<T> wrapper = new QueryWrapper<T>();
         // 读取dto中的条件，封装成为wrapper和page

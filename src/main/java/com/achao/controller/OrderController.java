@@ -1,11 +1,11 @@
 package com.achao.controller;
 
-import com.achao.pojo.dto.OrderDTO;
-import com.achao.pojo.dto.QueryPageDTO;
-import com.achao.pojo.vo.OrderVO;
-import com.achao.pojo.vo.PageVO;
-import com.achao.pojo.vo.Result;
-import com.achao.pojo.vo.StoreVO;
+import com.achao.sdk.pojo.dto.OrderDTO;
+import com.achao.sdk.pojo.dto.QueryPageDTO;
+import com.achao.sdk.pojo.vo.OrderVO;
+import com.achao.sdk.pojo.vo.PageVO;
+import com.achao.sdk.pojo.vo.Result;
+import com.achao.sdk.pojo.vo.StoreVO;
 import com.achao.service.OrdersService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

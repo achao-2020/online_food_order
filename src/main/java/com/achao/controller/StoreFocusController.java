@@ -1,10 +1,10 @@
 package com.achao.controller;
 
-import com.achao.pojo.dto.QueryPageDTO;
-import com.achao.pojo.dto.StoreFocusDTO;
-import com.achao.pojo.vo.PageVO;
-import com.achao.pojo.vo.Result;
-import com.achao.pojo.vo.StoreFocusVO;
+import com.achao.sdk.pojo.dto.QueryPageDTO;
+import com.achao.sdk.pojo.dto.StoreFocusDTO;
+import com.achao.sdk.pojo.vo.PageVO;
+import com.achao.sdk.pojo.vo.Result;
+import com.achao.sdk.pojo.vo.StoreFocusVO;
 import com.achao.service.StoreFocusService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

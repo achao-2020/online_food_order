@@ -1,20 +1,17 @@
 package com.achao.controller;
 
-import com.achao.pojo.dto.AdminDTO;
-import com.achao.pojo.dto.AdminUpdateDTO;
-import com.achao.pojo.dto.BaseLoginDTO;
-import com.achao.pojo.dto.QueryPageDTO;
-import com.achao.pojo.vo.AdminVO;
-import com.achao.pojo.vo.PageVO;
-import com.achao.pojo.vo.Result;
+import com.achao.sdk.pojo.dto.AdminDTO;
+import com.achao.sdk.pojo.dto.BaseLoginDTO;
+import com.achao.sdk.pojo.dto.QueryPageDTO;
+import com.achao.sdk.pojo.vo.AdminVO;
+import com.achao.sdk.pojo.vo.PageVO;
+import com.achao.sdk.pojo.vo.Result;
 import com.achao.service.AdminService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * @author achao

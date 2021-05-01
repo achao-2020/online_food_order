@@ -1,7 +1,7 @@
 package com.achao.online_food_order;
 
-import com.achao.pojo.constant.Constant;
-import com.achao.utils.RedisUtils;
+import com.achao.sdk.pojo.constant.Constant;
+import com.achao.sdk.utils.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;

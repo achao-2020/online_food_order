@@ -1,10 +1,10 @@
 package com.achao.controller;
 
-import com.achao.pojo.dto.BaseLoginDTO;
-import com.achao.pojo.dto.BillPageDTO;
-import com.achao.pojo.dto.QueryPageDTO;
-import com.achao.pojo.dto.StoreDTO;
-import com.achao.pojo.vo.*;
+import com.achao.sdk.pojo.dto.BaseLoginDTO;
+import com.achao.sdk.pojo.dto.BillPageDTO;
+import com.achao.sdk.pojo.dto.QueryPageDTO;
+import com.achao.sdk.pojo.dto.StoreDTO;
+import com.achao.sdk.pojo.vo.*;
 import com.achao.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

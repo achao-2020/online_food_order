@@ -2,10 +2,10 @@ package com.achao.redis.aspect;
 
 import com.achao.controller.DishesController;
 import com.achao.controller.StoreController;
-import com.achao.pojo.constant.Constant;
-import com.achao.pojo.dto.QueryPageDTO;
-import com.achao.pojo.po.SearchCriteriaPO;
 import com.achao.redis.RedisService;
+import com.achao.sdk.pojo.constant.Constant;
+import com.achao.sdk.pojo.dto.QueryPageDTO;
+import com.achao.sdk.pojo.dto.SearchCriteriaPO;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;

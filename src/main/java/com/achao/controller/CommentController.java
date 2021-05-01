@@ -1,11 +1,11 @@
 package com.achao.controller;
 
-import com.achao.pojo.dto.CommentDTO;
-import com.achao.pojo.dto.QueryPageDTO;
-import com.achao.pojo.vo.CommentVO;
-import com.achao.pojo.vo.CustomerVO;
-import com.achao.pojo.vo.PageVO;
-import com.achao.pojo.vo.Result;
+import com.achao.sdk.pojo.dto.CommentDTO;
+import com.achao.sdk.pojo.dto.QueryPageDTO;
+import com.achao.sdk.pojo.vo.CommentVO;
+import com.achao.sdk.pojo.vo.CustomerVO;
+import com.achao.sdk.pojo.vo.PageVO;
+import com.achao.sdk.pojo.vo.Result;
 import com.achao.service.CommentService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

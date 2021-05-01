@@ -1,6 +1,7 @@
 package com.achao.service.mapper;
 
-import com.achao.pojo.po.StoreBillPO;
+
+import com.achao.sdk.pojo.po.StoreBillPO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

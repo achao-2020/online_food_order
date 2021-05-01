@@ -1,5 +1,6 @@
 package com.achao.online_food_order;
 
+import com.achao.sdk.pojo.constant.AchaoTest;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
