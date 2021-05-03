@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/online_food_order.iml" filepath="$PROJECT_DIR$/online_food_order.iml" />
-      <module fileurl="file://$PROJECT_DIR$/online_food_order_sdk/online_food_order_sdk.iml" filepath="$PROJECT_DIR$/online_food_order_sdk/online_food_order_sdk.iml" />
     </modules>
   </component>
 </project>
