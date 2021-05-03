@@ -46,6 +46,7 @@ public class StoreBillService extends BaseService<StoreBillMapper, StoreBillPO, 
     public void addBill(OrderPO orderPO) {
         log.info("正在更新商店的账单信息");
         String storeId = getStoreId(orderPO);
+        // 一个订单对应的总价值
         BigDecimal priceTotal = orderRefDishService.getOrderPrice(orderPO.getId());
         String name = storeService.queryById(storeId).getInfo().getName();
         StoreBillPO storeBillPO = new StoreBillPO();

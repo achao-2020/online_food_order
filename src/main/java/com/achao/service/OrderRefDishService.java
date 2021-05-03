@@ -1,11 +1,13 @@
 package com.achao.service;
 
+import com.achao.sdk.pojo.dto.DishesOrderDTO;
 import com.achao.sdk.pojo.dto.OrderDTO;
 import com.achao.sdk.pojo.po.OrderRefDishesPO;
 import com.achao.sdk.pojo.vo.DishesVO;
 import com.achao.sdk.pojo.vo.OrderRefDishesVO;
 import com.achao.sdk.utils.DateUtil;
 import com.achao.service.mapper.OrderRefDishesMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,14 +27,17 @@ public class OrderRefDishService extends BaseService<OrderRefDishesMapper, Order
     private DishesService dishesService;
 
     public void createByOrder(OrderDTO dto) {
-        List<String> dishIds = dto.getDishIds();
-        dishIds.forEach(dishId -> {
+        List<DishesOrderDTO> dishes = dto.getDishes();
+        dishes.forEach(dish -> {
             OrderRefDishesPO po = new OrderRefDishesPO();
             String id = "oref" + DateUtil.format(new Date());
+            DishesVO info = dishesService.queryById(dish.getDishesId()).getInfo();
             po.setId(id);
             po.setOrderId(dto.getId());
-            po.setDishesId(dishId);
+            po.setDishesId(dish.getDishesId());
             po.setStoreId(dto.getStoreId());
+            po.setDishesPrice(info.getPrice());
+            po.setNumber(dish.getNumber());
             super.createCurrency(po);
         });
     }
@@ -42,14 +47,17 @@ public class OrderRefDishService extends BaseService<OrderRefDishesMapper, Order
      * @param id
      * @return
      */
-    public List<DishesVO> getDishesByOrderId(String id) {
+    public List<OrderRefDishesVO> getDishesByOrderId(String id) {
         OrderRefDishesPO po = new OrderRefDishesPO();
         po.setOrderId(id);
         List<OrderRefDishesPO> poList = super.searchCurrency(po);
-        List<DishesVO> rst = new ArrayList<>();
+        List<OrderRefDishesVO> rst = new ArrayList<>();
         poList.forEach(p -> {
             DishesVO dishesVO = dishesService.queryById(p.getDishesId()).getInfo();
-            rst.add(dishesVO);
+            OrderRefDishesVO refDishesVO = new OrderRefDishesVO();
+            BeanUtils.copyProperties(dishesVO, refDishesVO);
+            refDishesVO.setNumber(p.getNumber());
+            rst.add(refDishesVO);
         });
         return rst;
     }
@@ -62,11 +70,11 @@ public class OrderRefDishService extends BaseService<OrderRefDishesMapper, Order
     public BigDecimal getOrderPrice(String id) {
         OrderRefDishesPO po = new OrderRefDishesPO();
         po.setOrderId(id);
-        List<String> dishIds = super.searchCurrency(po).stream().map(result -> result.getDishesId()).collect(Collectors.toList());
         BigDecimal sum = new BigDecimal(0);
-        for (String dishId : dishIds) {
-            BigDecimal price = dishesService.queryById(dishId).getInfo().getPrice();
-            sum = sum.add(price);
+        for (OrderRefDishesPO refDishesPO : super.searchCurrency(po)) {
+            // 一个餐品的价格
+            BigDecimal multiply = refDishesPO.getDishesPrice().multiply(new BigDecimal(refDishesPO.getNumber()));
+            sum = sum.add(multiply);
         }
         return sum;
     }

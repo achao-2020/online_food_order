@@ -1,24 +1,20 @@
 package com.achao.service;
+
 import com.achao.sdk.pojo.constant.Constant;
 import com.achao.sdk.pojo.constant.HttpStatus;
 import com.achao.sdk.pojo.dto.OrderDTO;
 import com.achao.sdk.pojo.dto.QueryPageDTO;
 import com.achao.sdk.pojo.po.OrderPO;
-import com.achao.sdk.pojo.vo.DishesVO;
-import com.achao.sdk.pojo.vo.OrderVO;
-import com.achao.sdk.pojo.vo.PageVO;
-import com.achao.sdk.pojo.vo.Result;
+import com.achao.sdk.pojo.vo.*;
 import com.achao.sdk.utils.DateUtil;
 import com.achao.sdk.utils.ResponseUtil;
 import com.achao.service.mapper.OrderMapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +38,9 @@ public class OrdersService extends BaseService<OrderMapper, OrderPO, OrderVO> {
     @Resource
     private StoreBillService storeBillService;
 
+    @Resource
+    private CustomerService customerService;
+
     public Result<OrderVO> finish(String id) {
         OrderPO orderPO = new OrderPO();
         orderPO.setId(id);
@@ -58,7 +57,7 @@ public class OrdersService extends BaseService<OrderMapper, OrderPO, OrderVO> {
 
     public Result<OrderVO> createOrder(OrderDTO dto) {
         Result<List<OrderVO>> rst = new Result<>();
-
+        handleOrderDTO(dto);
         OrderPO orderPO = (OrderPO) super.getTo(new OrderPO(), dto);
         // 如果id为null或者为空，则增加一个admin
         if (StringUtils.isBlank(dto.getId())) {
@@ -77,9 +76,24 @@ public class OrdersService extends BaseService<OrderMapper, OrderPO, OrderVO> {
                 log.error("数据" + dto.getId() + "更新失败");
             }
             OrderVO orderVO = (OrderVO) super.getVo(new OrderVO(), orderPO);
-            List<DishesVO> dishesVOS = orderRefDishService.getDishesByOrderId(orderVO.getId());
-            orderVO.setDishes(dishesVOS);
+            List<OrderRefDishesVO> refDishesVOS = orderRefDishService.getDishesByOrderId(orderVO.getId());
+            orderVO.setDishes(refDishesVOS);
             return ResponseUtil.simpleSuccessInfo(orderVO);
+        }
+    }
+
+    private void handleOrderDTO(OrderDTO dto) {
+        String customerId = dto.getCustomerId();
+        CustomerVO info = customerService.queryById(customerId).getInfo();
+        if (StringUtils.isBlank(dto.getContact())) {
+            dto.setContact(info.getContact());
+        }
+        if (dto.getLongitude() == null || dto.getLatitude() == null) {
+            dto.setLongitude(info.getLongitude());
+            dto.setLatitude(info.getLatitude());
+        }
+        if (StringUtils.isBlank(dto.getAddress())) {
+            dto.setAddress(info.getAddress());
         }
     }
 
@@ -92,7 +106,7 @@ public class OrdersService extends BaseService<OrderMapper, OrderPO, OrderVO> {
 
     public Result<OrderVO> queryById(String id) {
         OrderPO orderPO = this.baseMapper.selectById(id);
-        List<DishesVO> dishes = orderRefDishService.getDishesByOrderId(orderPO.getId());
+        List<OrderRefDishesVO> dishes = orderRefDishService.getDishesByOrderId(orderPO.getId());
         if (CollectionUtils.isEmpty(dishes)) {
             return null;
         }
