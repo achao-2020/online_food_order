@@ -14,6 +14,7 @@ import com.achao.service.mapper.StoreBillMapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -43,6 +44,7 @@ public class StoreBillService extends BaseService<StoreBillMapper, StoreBillPO, 
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public void addBill(OrderPO orderPO) {
         log.info("正在更新商店的账单信息");
         String storeId = getStoreId(orderPO);

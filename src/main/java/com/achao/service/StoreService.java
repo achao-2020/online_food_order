@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -33,6 +34,7 @@ public class StoreService extends BaseService<StoreMapper, StorePO, StoreVO> {
     @Autowired
     private RedisService redisService;
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public Result<StoreVO> createStore(StoreDTO dto) {
         // 如果id为null或者为空，则增加一个store
         if (StringUtils.isBlank(dto.getId())) {
@@ -61,7 +63,8 @@ public class StoreService extends BaseService<StoreMapper, StorePO, StoreVO> {
         BeanUtils.copyProperties(storeTo, storeVO);
         return ResponseUtil.simpleSuccessInfo(storeVO);
     }
-    
+
+    @Transactional(rollbackFor = RuntimeException.class)
     public Result<StoreVO> login(BaseLoginDTO dto) {
         if (StringUtils.isBlank(dto.getAccount()) || StringUtils.isBlank(dto.getPassword())) {
             log.error("账号或者密码不能为空");
@@ -78,6 +81,7 @@ public class StoreService extends BaseService<StoreMapper, StorePO, StoreVO> {
         return ResponseUtil.simpleSuccessInfo(storeVO);
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public void deleteById(String id) {
         int success = this.baseMapper.deleteById(id);
         if (success <= 0) {
@@ -99,5 +103,10 @@ public class StoreService extends BaseService<StoreMapper, StorePO, StoreVO> {
     public Set<Object> queryPageByName(String name) {
         String key = Constant.HOST_STORE_NAME + name;
         return redisService.queryHostName(key);
+    }
+
+    public String queryStoreName(String storeId) {
+        String name = queryById(storeId).getInfo().getName();
+        return name;
     }
 }

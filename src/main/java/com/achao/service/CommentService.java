@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.Date;
@@ -32,6 +33,7 @@ public class CommentService extends BaseService<CommentMapper, CommentPO, Commen
     @Autowired
     private DelivererService delivererService;
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public Result<CommentVO> create(CommentDTO dto) {
         // 如果id为null或者为空，则增加一个comment
         if (StringUtils.isBlank(dto.getId())) {
@@ -61,6 +63,7 @@ public class CommentService extends BaseService<CommentMapper, CommentPO, Commen
         delivererService.updateRank(deliverId, rank);
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public void deleteById(String id) {
         int success = this.baseMapper.deleteById(id);
         if (success <= 0) {

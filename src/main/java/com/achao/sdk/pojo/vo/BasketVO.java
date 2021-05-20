@@ -5,11 +5,19 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
+/**
+ * @author achao
+ */
 @Data
 @ApiModel(value = "购物篮视图层对象")
 public class BasketVO extends BaseVO {
     @NotReflect
     private static final long serialVersionUID = -4227989884467096514L;
+
+    @ApiModelProperty(value = "customerId", notes = "关联顾客id")
+    private String customerId;
 
     @ApiModelProperty(value = "storeId", notes = "餐品关联商店id")
     private String storeId;
@@ -22,6 +30,9 @@ public class BasketVO extends BaseVO {
 
     @ApiModelProperty(value = "dishesName", notes = "餐品名称")
     private String dishesName;
+
+    @ApiModelProperty(value = "price(餐品单价)", notes = "餐品单价")
+    private BigDecimal price;
 
     @ApiModelProperty(value = "description", notes = "餐品描述")
     private String description;

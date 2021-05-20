@@ -24,6 +24,6 @@ public class DelivererPO extends BasePO {
     private Double longitude;
     @TableField(value = "latitude", updateStrategy = FieldStrategy.NOT_EMPTY)
     private Double latitude;
-    @TableField(value = "contract", updateStrategy = FieldStrategy.NOT_EMPTY)
-    private String contract;
+    @TableField(value = "contact", updateStrategy = FieldStrategy.NOT_EMPTY)
+    private String contact;
 }

@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -52,10 +53,12 @@ public class CustomerService extends BaseService<CustomerMapper, CustomerPO, Cus
         return ResponseUtil.simpleSuccessInfo(customerVO);
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public void deleteById(String id) {
         this.baseMapper.deleteById(id);
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public Result<CustomerVO> createCustomer(CustomerDTO dto) {
         // 如果id为null或者为空的话，则增加一个customer
         if (StringUtils.isBlank(dto.getId())) {

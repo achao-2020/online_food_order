@@ -10,8 +10,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -52,5 +56,17 @@ public class DishesController {
     @GetMapping("/queryByName")
     public Set<Object> queryPageByName(String name) {
         return dishesService.queryByName(name);
+    }
+
+    @ApiOperation(value = "餐品图片上传接口")
+    @PostMapping("/uploadPhoto/{dishedId}")
+    public Result<String> uploadPhoto(MultipartFile file, @PathVariable String dishedId) {
+        return dishesService.uploadPhoto(file, dishedId);
+    }
+
+    @ApiOperation(value = "下载图片", response = OutputStream.class)
+    @GetMapping("/downPhoto/{dishesId}")
+    public ResponseEntity<byte[]> downPhoto(@PathVariable String dishesId) {
+        return dishesService.downPhoto(dishesId);
     }
 }

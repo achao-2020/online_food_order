@@ -20,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +34,7 @@ public class DelivererService extends BaseService<DelivererMapper, DelivererPO, 
     @Autowired
     private OrdersService ordersService;
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public Result<DelivererVO> createDeliver(DelivererDTO dto) {
         // 如果配送员的id为空，则创建一个配送员
         if (StringUtils.isBlank(dto.getId())) {
@@ -52,25 +55,7 @@ public class DelivererService extends BaseService<DelivererMapper, DelivererPO, 
         return ResponseUtil.simpleSuccessInfo(delivererVO);
     }
 
-    private Result<List<DelivererVO>> search(DelivererRegisterDTO dto) {
-        dto.setId(null);
-        DelivererPO delivererPO = new DelivererPO();
-        BeanUtils.copyProperties(dto, delivererPO);
-        List<DelivererPO> delivererPOS = super.searchCurrency(delivererPO);
-        List<DelivererVO> list = GeneralConv.convert2List(delivererPOS, DelivererVO.class);
-        return ResponseUtil.simpleSuccessInfo(list);
-    }
-
-
-    public Result<DelivererVO> updateDeliver(DelivererDTO dto) {
-        DelivererPO delivererTo = new DelivererPO();
-        BeanUtils.copyProperties(dto, delivererTo);
-        super.updateCurrency(delivererTo);
-        DelivererVO delivererVO = new DelivererVO();
-        BeanUtils.copyProperties(delivererTo, delivererVO);
-        return ResponseUtil.simpleSuccessInfo(delivererVO);
-    }
-
+    @Transactional(rollbackFor = RuntimeException.class)
     public Result<DelivererVO> login(BaseLoginDTO dto) {
         if (StringUtils.isBlank(dto.getAccount()) || StringUtils.isBlank(dto.getPassword())) {
             log.error("账号或者密码不能为空");
@@ -87,6 +72,7 @@ public class DelivererService extends BaseService<DelivererMapper, DelivererPO, 
         return ResponseUtil.simpleSuccessInfo(delivererVO);
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public void deleteById(String id) {
         int success = this.baseMapper.deleteById(id);
         if (success <= 0) {
@@ -105,7 +91,12 @@ public class DelivererService extends BaseService<DelivererMapper, DelivererPO, 
         return super.searchPageCurrency(request, DelivererPO.class, DelivererVO.class);
     }
 
-    // 更新配送员的评级信息
+    /**
+     * 更新配送员的评级信息
+     * @param deliverId
+     * @param rank
+     */
+    @Transactional(rollbackFor = RuntimeException.class)
     public void updateRank(String deliverId, Integer rank) {
         DelivererPO delivererPO = new DelivererPO();
         delivererPO.setId(deliverId);
@@ -113,6 +104,7 @@ public class DelivererService extends BaseService<DelivererMapper, DelivererPO, 
         this.baseMapper.updateById(delivererPO);
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public void updateWorkTime(OrderPO po) {
         Date createTime = po.getCreateTime();
         int workTime = DateUtil.getWorkTime(createTime);
@@ -125,6 +117,7 @@ public class DelivererService extends BaseService<DelivererMapper, DelivererPO, 
         this.baseMapper.updateById(delivererPO);
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public void acceptOrder(String orderId, String deliverId) {
         ordersService.setDeliverId(orderId, deliverId);
     }

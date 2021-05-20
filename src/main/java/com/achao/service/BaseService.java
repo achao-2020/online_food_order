@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public abstract class BaseService< E extends BaseMapper, T extends BasePO, D ext
     @Autowired
     private StoreBillService storeBillService;
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public Result<PageVO> searchPageCurrency(QueryPageDTO dto, Class<T> tClass, Class<D> dClass) {
         IPage<T> page = new Page<>();
         QueryWrapper<T> wrapper = new QueryWrapper<T>();
@@ -58,6 +60,7 @@ public abstract class BaseService< E extends BaseMapper, T extends BasePO, D ext
     }
 
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public List<T> searchCurrency(T to) {
         try {
             QueryWrapper<T> wrapper = GeneralConv.convQueryWrapper(to);
@@ -71,25 +74,14 @@ public abstract class BaseService< E extends BaseMapper, T extends BasePO, D ext
         return null;
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public void updateCurrency(T to) {
         BaseMapper<T> mapper = (BaseMapper<T>) SpringUtil.getBean(ServiceMapper.serviceMapper.get(to.getClass().getSimpleName()));
         mapper.updateById(to);
     }
 
 
-    public void deleteCurrency(T entity) throws SQLException {
-        try {
-            QueryWrapper<T> wrapper = GeneralConv.convQueryWrapper(entity);
-            BaseMapper<T> mapper =
-                    (BaseMapper<T>) SpringUtil.getBean(ServiceMapper.serviceMapper.get(entity.getClass().getSimpleName()));
-            mapper.delete(wrapper);
-        } catch (IllegalAccessException e) {
-            log.error("删除有误！");
-        }
-
-    }
-
-
+    @Transactional(rollbackFor = RuntimeException.class)
     public void createCurrency(T entity) {
         BaseMapper<T> mapper =
                 (BaseMapper) SpringUtil.getBean(ServiceMapper.serviceMapper.get(entity.getClass().getSimpleName()));

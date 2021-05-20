@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -64,9 +65,23 @@ public class CustomerController {
     }
 
     @ApiOperation(value = "添加餐品到购物车", notes = "添加餐品到购物车", response = Result.class)
-    @PostMapping("/addDishes")
-    public Result<BasketVO> create(@RequestBody BasketDTO request) {
+    @PostMapping("/addBasket")
+    @Transactional(rollbackFor = RuntimeException.class)
+    public Result<BasketVO> addBasket(@RequestBody BasketDTO request) {
         return basketService.create(request);
+    }
+
+    @ApiOperation(value = "删除购物车", notes = "输入id批量删除购物车")
+    @PostMapping("/deleteBasket")
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void  deleteBasket(@RequestBody List<String> ids) {
+        basketService.deleteBath(ids);
+    }
+
+    @ApiOperation(value = "查询顾客购物栏", notes = "返回list", response = Result.class)
+    @GetMapping("/queryBaskets/{id}")
+    public Result<List<BasketVO>> queryBaskets(@PathVariable String id) {
+        return basketService.queryBaskets(id);
     }
 
     @ApiOperation(value = "查找附近的商店", notes = "分页查找附近的商店", response = Result.class)

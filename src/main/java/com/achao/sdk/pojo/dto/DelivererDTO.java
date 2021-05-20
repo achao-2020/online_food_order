@@ -22,6 +22,6 @@ public class DelivererDTO extends BaseDTO{
     private Double longitude;
     @ApiModelProperty(name = "latitude", notes = "配送员纬度")
     private Double latitude;
-    @ApiModelProperty(name = "contract", notes = "配送员手机号")
-    private String contract;
+    @ApiModelProperty(name = "contact", notes = "配送员手机号")
+    private String contact;
 }

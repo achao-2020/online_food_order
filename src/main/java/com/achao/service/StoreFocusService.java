@@ -1,5 +1,6 @@
 package com.achao.service;
 
+import com.achao.sdk.pojo.constant.HttpStatus;
 import com.achao.sdk.pojo.dto.QueryPageDTO;
 import com.achao.sdk.pojo.dto.StoreFocusDTO;
 import com.achao.sdk.pojo.po.StoreFocusPO;
@@ -11,10 +12,12 @@ import com.achao.sdk.utils.GeneralConv;
 import com.achao.sdk.utils.ResponseUtil;
 import com.achao.service.mapper.StoreFocusMapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -30,33 +33,18 @@ public class StoreFocusService extends BaseService<StoreFocusMapper, StoreFocusP
     @Autowired
     private StoreService storeService;
 
-    public Result<List<StoreFocusVO>> create(List<StoreFocusDTO> dtos) {
-        Result<List<StoreFocusVO>> rs = new Result<>();
-        dtos.forEach(dto -> {
-            // 如果id为null或者为空，则增加一个comment
-            if (StringUtils.isBlank(dto.getId())) {
-                StoreFocusPO focusPO = (StoreFocusPO) super.getTo(new StoreFocusPO(), dto);
-                focusPO.setId("foc" + DateUtil.format(new Date()));
-                super.createCurrency(focusPO);
-                StoreFocusVO focusVO = (StoreFocusVO) super.getVo(new StoreFocusVO(), focusPO);
-                focusVO.setStoreName(storeService.queryById(dto.getStoreId()).getInfo().getName());
-                focusVO.setCustomerName(customerService.queryById(dto.getCustomerId()).getInfo().getName());
-                rs.getInfo().add(focusVO);
-            }
-            // 不为空的时候，按照id更新
-            StoreFocusPO focusPO = (StoreFocusPO) super.getTo(new StoreFocusPO(), dto);
-            int success = this.baseMapper.updateById(focusPO);
-            if (success <= 0) {
-                log.error("数据" + dto.getId() + "更新失败");
-            }
-            StoreFocusVO focusVO = (StoreFocusVO) super.getVo(new StoreFocusVO(), focusPO);
-            focusVO.setStoreName(storeService.queryById(dto.getStoreId()).getInfo().getName());
-            focusVO.setCustomerName(customerService.queryById(dto.getCustomerId()).getInfo().getName());
-            rs.getInfo().add(focusVO);
-        });
-        return rs;
+    @Transactional(rollbackFor = RuntimeException.class)
+    public Result<StoreFocusVO> create(StoreFocusDTO dto) {
+        StoreFocusPO focusPO = (StoreFocusPO) super.getTo(new StoreFocusPO(), dto);
+        focusPO.setId("foc" + DateUtil.format(new Date()));
+        super.createCurrency(focusPO);
+        StoreFocusVO focusVO = (StoreFocusVO) super.getVo(new StoreFocusVO(), focusPO);
+        focusVO.setStoreName(storeService.queryById(dto.getStoreId()).getInfo().getName());
+        focusVO.setCustomerName(customerService.queryById(dto.getCustomerId()).getInfo().getName());
+        return ResponseUtil.simpleSuccessInfo(focusVO);
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public void deleteById(String id) {
         int success = this.baseMapper.deleteById(id);
         if (success <= 0) {
@@ -88,5 +76,16 @@ public class StoreFocusService extends BaseService<StoreFocusMapper, StoreFocusP
         List<StoreFocusPO> focusPOS = baseMapper.selectList(wrapper);
         List list = GeneralConv.convert2List(focusPOS, StoreFocusVO.class);
         return ResponseUtil.simpleSuccessInfo(list);
+    }
+
+    public Result<String> isExist(String customerId, String storeId) {
+        QueryWrapper<StoreFocusPO> wrapper = new QueryWrapper<>();
+        wrapper.eq("customer_id", customerId);
+        wrapper.eq("store_id", storeId);
+        List<StoreFocusPO> list = this.baseMapper.selectList(wrapper);
+        if (CollectionUtils.isEmpty(list)) {
+            return ResponseUtil.simpleFail(HttpStatus.NOT_FOUND, "没有找到对应的关注", null);
+        }
+        return ResponseUtil.simpleSuccessInfo(list.get(0).getId());
     }
 }

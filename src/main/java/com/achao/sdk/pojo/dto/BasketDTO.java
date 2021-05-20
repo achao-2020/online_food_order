@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 @ApiModel(value = "购物篮传输对象")
 public class BasketDTO extends BaseDTO{
@@ -14,17 +16,20 @@ public class BasketDTO extends BaseDTO{
     @ApiModelProperty(value = "id", notes = "id")
     private String id;
 
+    @ApiModelProperty(value = "customerId(顾客id)", notes = "关联顾客id")
+    private String customerId;
+
     @ApiModelProperty(value = "storeId", notes = "餐品关联商店id")
     private String storeId;
-
-    @ApiModelProperty(value = "storeName", notes = "餐品关联商店名称")
-    private String storeName;
 
     @ApiModelProperty(value = "dishesId", notes = "餐品id")
     private String dishesId;
 
     @ApiModelProperty(value = "dishesName", notes = "餐品名称")
     private String dishesName;
+
+    @ApiModelProperty(value = "price(餐品单价)", notes = "餐品单价")
+    private BigDecimal price;
 
     @ApiModelProperty(value = "description", notes = "餐品描述")
     private String description;

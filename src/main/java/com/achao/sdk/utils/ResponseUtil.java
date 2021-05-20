@@ -24,12 +24,16 @@ public class ResponseUtil<T extends BaseVO> {
     }
 
     public static <T> Result<T> simpleFail(String code, String message) {
+        return simpleFail(code, message, null);
+    }
+
+    public static <T> Result<T> simpleFail(String code, String message, T t) {
         Result<T> result = new Result<>();
         List<Map<String, String>> list = new ArrayList<>();
         result.setCode(code);
         result.setSuccess(false);
         result.setMessage(message);
+        result.setInfo(t == null ? t : null);
         return result;
-
     }
 }

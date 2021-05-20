@@ -9,6 +9,7 @@ import com.achao.service.StoreFocusService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +23,8 @@ public class StoreFocusController {
 
     @PostMapping(value = "/create")
     @ApiOperation(value = "创建商店关注List", notes = "可以用于顾客对商店的关注，当id为空的时候按id更新, 可以批量", response = Result.class)
-    public Result<List<StoreFocusVO>> create(@RequestBody List<StoreFocusDTO> request) {
+    @Transactional(rollbackFor = RuntimeException.class)
+    public Result<StoreFocusVO> create(@RequestBody StoreFocusDTO request) {
         return focusService.create(request);
     }
 
@@ -48,5 +50,12 @@ public class StoreFocusController {
     @PostMapping("/queryPage")
     public Result<PageVO> queryPage(@RequestBody QueryPageDTO request) {
         return focusService.queryPage(request);
+    }
+
+    @ApiOperation(value = "判断一个关注是否存在", notes = "返回布尔值", response = Result.class)
+    @GetMapping("/isExist/{customerId}/{storeId}")
+    public Result<String> isExist(@PathVariable("customerId") String customerId,
+                                   @PathVariable("storeId") String storeId) {
+        return focusService.isExist(customerId, storeId);
     }
 }

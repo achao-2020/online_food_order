@@ -75,7 +75,9 @@ public class SQLConditionUtil {
             for (SearchCriteriaPO to : toes) {
                 if ("=".equals(to.getSearchPattern())) {
                     wrapper.eq(to.getKey(), to.getValue());
-                } else if ("!=".equals(to.getSearchPattern())) {
+                }else if ("<>".equals(to.getSearchPattern())) {
+                    wrapper.ne(to.getKey(), to.getValue());
+                }else if ("!=".equals(to.getSearchPattern())) {
                     wrapper.ne(to.getKey(), to.getValue());
                 } else if (">".equals(to.getSearchPattern())) {
                     wrapper.gt(to.getKey(), to.getValue());

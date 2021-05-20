@@ -22,7 +22,7 @@ public class DishesDTO extends BaseDTO {
     private Integer discount;
     @ApiModelProperty(value = "remain", notes = "餐品余量")
     private Integer remain;
-    @ApiModelProperty(value = "photo", notes = "餐品样张url")
+    @ApiModelProperty(value = "photo", notes = "餐品图片名称")
     private String photo;
     @ApiModelProperty(value = "price", notes = "餐品价格")
     private BigDecimal price;

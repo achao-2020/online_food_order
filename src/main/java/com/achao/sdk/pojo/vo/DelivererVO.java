@@ -24,6 +24,6 @@ public class DelivererVO extends BaseVO{
     private Double longitude;
     @ApiModelProperty(value = "latitude", notes = "纬度")
     private Double latitude;
-    @ApiModelProperty(value = "contract", notes = "手机号")
-    private String contract;
+    @ApiModelProperty(value = "contact", notes = "手机号")
+    private String contact;
 }

@@ -13,6 +13,7 @@ import com.achao.service.mapper.DeliverBillMapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -31,6 +32,7 @@ public class DeliverBillService extends BaseService<DeliverBillMapper, DeliverBi
     @Resource
     private OrderRefDishService orderRefDishService;
 
+    @Transactional(rollbackFor = RuntimeException.class)
     @Override
     protected void addBill(OrderPO orderPO) {
         log.info("正在更新配送员的账单信息");

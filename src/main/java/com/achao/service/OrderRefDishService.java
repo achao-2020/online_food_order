@@ -9,6 +9,7 @@ import com.achao.sdk.utils.DateUtil;
 import com.achao.service.mapper.OrderRefDishesMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -26,6 +27,7 @@ public class OrderRefDishService extends BaseService<OrderRefDishesMapper, Order
     @Resource
     private DishesService dishesService;
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public void createByOrder(OrderDTO dto) {
         List<DishesOrderDTO> dishes = dto.getDishes();
         dishes.forEach(dish -> {

@@ -12,6 +12,7 @@ import com.achao.service.mapper.OrderMapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -41,6 +42,7 @@ public class OrdersService extends BaseService<OrderMapper, OrderPO, OrderVO> {
     @Resource
     private CustomerService customerService;
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public Result<OrderVO> finish(String id) {
         OrderPO orderPO = new OrderPO();
         orderPO.setId(id);
@@ -55,6 +57,7 @@ public class OrdersService extends BaseService<OrderMapper, OrderPO, OrderVO> {
         return queryById(id);
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public Result<OrderVO> createOrder(OrderDTO dto) {
         Result<List<OrderVO>> rst = new Result<>();
         handleOrderDTO(dto);
@@ -97,6 +100,7 @@ public class OrdersService extends BaseService<OrderMapper, OrderPO, OrderVO> {
         }
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public void deleteById(String id) {
         int success = this.baseMapper.deleteById(id);
         if (success <= 0) {
@@ -134,6 +138,7 @@ public class OrdersService extends BaseService<OrderMapper, OrderPO, OrderVO> {
         this.baseMapper.updateById(orderPO);
     }
 
+    @Transactional(rollbackFor = RuntimeException.class)
     public Result<String> delivering(String id) {
         OrderPO orderPO = new OrderPO();
         orderPO.setId(id);
