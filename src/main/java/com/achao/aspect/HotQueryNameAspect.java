@@ -29,7 +29,8 @@ public class HotQueryNameAspect {
     @Autowired
     private RedisService redisService;
 
-    @Pointcut("execution(public * com.achao.controller.*.queryPage(..))")
+    @Pointcut("execution(public * com.achao.controller.DishesController.queryPage(..)) || execution(public * com.achao.controller" +
+            ".StoreController.queryPage(..))")
     public void tag() {
     }
 
