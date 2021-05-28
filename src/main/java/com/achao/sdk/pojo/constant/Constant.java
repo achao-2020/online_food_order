@@ -12,6 +12,9 @@ public interface Constant {
     String STORE_QUERY_RESULT = "store:query:result";
     String LOCATION_STORE = "location:store";
 
+    Integer YES = 1;
+    Integer NO = 0;
+
     /**
      * 默认的redis键过期时间
      */
@@ -26,4 +29,14 @@ public interface Constant {
      * 热度商店名称redis键
      */
     String HOST_STORE_NAME = "host:store:";
+
+    /**
+     * 消息订阅内容键
+     */
+    String MESSAGE = "message";
+
+    /**
+     * 消息订阅者key
+     */
+    String MESSAGE_ACCEPTER = "message_accepter";
 }

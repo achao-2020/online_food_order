@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * @author achao
+ */
 @Data
 @ApiModel(value = "通用传输对象")
 public class BaseDTO implements Serializable {

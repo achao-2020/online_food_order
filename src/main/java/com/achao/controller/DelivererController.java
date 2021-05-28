@@ -24,7 +24,7 @@ import java.util.Map;
 @RequestMapping("/delivererService")
 @Api(value = "配送员接口", description = "该接口提供给配送员访问")
 public class DelivererController {
-    @Autowired
+    @Resource
     private DelivererService delivererService;
 
     @Resource

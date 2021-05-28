@@ -1,9 +1,6 @@
 package com.achao.controller;
 
-import com.achao.sdk.pojo.dto.BaseLoginDTO;
-import com.achao.sdk.pojo.dto.BillPageDTO;
-import com.achao.sdk.pojo.dto.QueryPageDTO;
-import com.achao.sdk.pojo.dto.StoreDTO;
+import com.achao.sdk.pojo.dto.*;
 import com.achao.sdk.pojo.vo.*;
 import com.achao.service.*;
 import io.swagger.annotations.Api;
@@ -66,5 +63,11 @@ public class StoreController {
     @GetMapping("/queryPageByName")
     public Set<Object> queryPageByName(String name) {
         return storeService.queryPageByName(name);
+    }
+
+    @ApiOperation(value = "发布消息到订阅的顾客中", notes = "发布消息到订阅的顾客中", response = Result.class)
+    @PostMapping(value = "/publishMessage")
+    public Result<String> publishMessage(@RequestBody MessageDTO messageDTO) {
+        return storeService.publishMessage(messageDTO);
     }
 }

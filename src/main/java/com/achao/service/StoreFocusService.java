@@ -26,7 +26,7 @@ import java.util.List;
  * @author achao
  */
 @Slf4j
-@Service("store_FocusService")
+@Service("storeFocusService")
 public class StoreFocusService extends BaseService<StoreFocusMapper, StoreFocusPO, StoreFocusVO> {
     @Autowired
     private CustomerService customerService;
@@ -72,7 +72,7 @@ public class StoreFocusService extends BaseService<StoreFocusMapper, StoreFocusP
 
     public Result<List<StoreFocusVO>> queryByStoreId(String id) {
         QueryWrapper<StoreFocusPO> wrapper = new QueryWrapper<>();
-        wrapper.eq("store", id);
+        wrapper.eq("store_id", id);
         List<StoreFocusPO> focusPOS = baseMapper.selectList(wrapper);
         List list = GeneralConv.convert2List(focusPOS, StoreFocusVO.class);
         return ResponseUtil.simpleSuccessInfo(list);

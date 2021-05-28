@@ -21,4 +21,6 @@ public class CustomerPO extends BasePO {
     private Double latitude;
     @TableField(value = "contact")
     private String contact;
+    @TableField(value = "status")
+    private Integer status;
 }

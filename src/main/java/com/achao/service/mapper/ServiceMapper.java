@@ -21,5 +21,7 @@ public class ServiceMapper {
         serviceMapper.put("StoreBillPO", StoreBillMapper.class);
         serviceMapper.put("DeliverBillPO", DeliverBillMapper.class);
         serviceMapper.put("OrderRefDishesPO", OrderRefDishesMapper.class);
+        serviceMapper.put("SubscribeInfoPO", SubscribeInfoMapper.class);
+        serviceMapper.put("SubscribeMessagePO", SubscribeMessageMapper.class);
     }
 }

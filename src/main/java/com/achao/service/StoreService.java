@@ -4,15 +4,19 @@ import com.achao.redis.RedisService;
 import com.achao.sdk.pojo.constant.Constant;
 import com.achao.sdk.pojo.constant.HttpStatus;
 import com.achao.sdk.pojo.dto.BaseLoginDTO;
+import com.achao.sdk.pojo.dto.MessageDTO;
 import com.achao.sdk.pojo.dto.QueryPageDTO;
 import com.achao.sdk.pojo.dto.StoreDTO;
 import com.achao.sdk.pojo.po.StorePO;
+import com.achao.sdk.pojo.po.SubscribeInfoPO;
+import com.achao.sdk.pojo.po.SubscribeMessagePO;
 import com.achao.sdk.pojo.vo.PageVO;
 import com.achao.sdk.pojo.vo.Result;
 import com.achao.sdk.pojo.vo.StoreVO;
 import com.achao.sdk.utils.DateUtil;
 import com.achao.sdk.utils.ResponseUtil;
 import com.achao.service.mapper.StoreMapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -20,9 +24,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author achao
@@ -33,6 +39,10 @@ public class StoreService extends BaseService<StoreMapper, StorePO, StoreVO> {
 
     @Autowired
     private RedisService redisService;
+    @Resource
+    private SubscribeInfoService subscribeInfoService;
+    @Resource
+    private SubscribeMessageService subscribeMessageService;
 
     @Transactional(rollbackFor = RuntimeException.class)
     public Result<StoreVO> createStore(StoreDTO dto) {
@@ -108,5 +118,29 @@ public class StoreService extends BaseService<StoreMapper, StorePO, StoreVO> {
     public String queryStoreName(String storeId) {
         String name = queryById(storeId).getInfo().getName();
         return name;
+    }
+
+    /**
+     * 商店发布订阅消息
+     * @param messageDTO
+     * @return
+     */
+    public Result<String> publishMessage(MessageDTO messageDTO) {
+        List<String> customerIds = messageDTO.getCustomerIds();
+        String cusIds = org.springframework.util.StringUtils.collectionToCommaDelimitedString(customerIds);
+        SubscribeMessagePO messagePO = new SubscribeMessagePO();
+        messagePO.setTitle(messageDTO.getTitle());
+        messagePO.setContent(messageDTO.getMessage());
+        messagePO.setId(UUID.randomUUID().toString());
+        subscribeMessageService.createCurrency(messagePO);
+        String messageId = messagePO.getId();
+        SubscribeInfoPO infoPO = new SubscribeInfoPO();
+        infoPO.setStoreId(messageDTO.getStoreId());
+        infoPO.setMessageId(messageId);
+        infoPO.setIsSend(Constant.NO);
+        infoPO.setCustomerId(cusIds);
+        infoPO.setId(UUID.randomUUID().toString());
+        subscribeInfoService.createCurrency(infoPO);
+        return ResponseUtil.simpleSuccessInfo("推送成功！");
     }
 }

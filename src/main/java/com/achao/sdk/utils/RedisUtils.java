@@ -1,6 +1,7 @@
 package com.achao.sdk.utils;
 
 import com.achao.sdk.pojo.constant.Constant;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.*;
@@ -75,7 +76,7 @@ public class RedisUtils {
             if (keys.length == 1) {
                 return redisTemplate.delete(keys[0]);
             }
-            return redisTemplate.delete(CollectionUtils.arrayToList(keys)) > 0;
+            return redisTemplate.delete(Lists.newArrayList(keys)) > 0;
         }
         log.warn("删除的key不能为空！");
         return false;
@@ -208,6 +209,18 @@ public class RedisUtils {
             log.error("设置缓存失效时间失败", e);
             return false;
         }
+    }
+
+
+
+    public boolean hmDelete(String key, String hKey) {
+        try {
+            redisTemplate.opsForHash().delete(key, hKey);
+        } catch (Exception e) {
+            log.error("删除hash key 失败");
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -569,7 +582,7 @@ public class RedisUtils {
         Point point = new Point(longitude, latitude);
         try {
             redisTemplate.opsForGeo().add(key, point, id);
-            redisTemplate.expire(key, time, TimeUnit.SECONDS);
+            redisTemplate.expire(key,   time, TimeUnit.SECONDS);
             return true;
         } catch (Exception e) {
             log.error("添加位置数据失败，请检查数据的合法性！", e);

@@ -1,6 +1,7 @@
 package com.achao.service;
 
 import com.achao.redis.RedisService;
+import com.achao.sdk.pojo.constant.Constant;
 import com.achao.sdk.pojo.constant.HttpStatus;
 import com.achao.sdk.pojo.dto.BaseLoginDTO;
 import com.achao.sdk.pojo.dto.CustomerDTO;
@@ -11,6 +12,7 @@ import com.achao.sdk.pojo.po.StorePO;
 import com.achao.sdk.pojo.vo.*;
 import com.achao.sdk.utils.DateUtil;
 import com.achao.sdk.utils.GeneralConv;
+import com.achao.sdk.utils.RedisUtils;
 import com.achao.sdk.utils.ResponseUtil;
 import com.achao.service.mapper.CustomerMapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author achao
@@ -37,6 +40,9 @@ public class CustomerService extends BaseService<CustomerMapper, CustomerPO, Cus
     @Resource
     private RedisService redisService;
 
+    @Resource
+    private RedisUtils redisUtils;
+
     public Result<CustomerVO> login(BaseLoginDTO dto) {
         if (StringUtils.isBlank(dto.getAccount()) || StringUtils.isBlank(dto.getPassword())) {
             log.error("账号或者密码不能为空");
@@ -49,7 +55,11 @@ public class CustomerService extends BaseService<CustomerMapper, CustomerPO, Cus
             return ResponseUtil.simpleFail(HttpStatus.NOT_FOUND, "账号或者密码不正确");
         }
         CustomerVO customerVO = new CustomerVO();
+        CustomerPO customerPO = customerTos.get(0);
         BeanUtils.copyProperties(customerTos.get(0), customerVO);
+        // 更新状态为在线
+        customerPO.setStatus(1);
+        this.baseMapper.updateById(customerPO);
         return ResponseUtil.simpleSuccessInfo(customerVO);
     }
 
@@ -130,5 +140,35 @@ public class CustomerService extends BaseService<CustomerMapper, CustomerPO, Cus
         pageVO.setTotal((long) resultSize);
         pageVO.setInfos(vos);
         return ResponseUtil.simpleSuccessInfo(pageVO);
+    }
+
+    /**
+     * 退出登录
+     * @param id
+     * @return
+     */
+    public Result<String> loginOut(String id) {
+        CustomerPO customerPO = new CustomerPO();
+        customerPO.setId(id);
+        customerPO.setStatus(0);
+        if (this.baseMapper.updateById(customerPO) > 0) {
+            return ResponseUtil.simpleSuccessInfo("注销成功！");
+        }
+        return ResponseUtil.simpleFail(HttpStatus.ERROR, "注销失败");
+    }
+
+    /**
+     * 获取订阅商店推送的消息
+     * @param id
+     * @return
+     */
+    public Result<String> getSubscribeMessage(String id) {
+        Map<Object, Object> idMessageMap = redisUtils.hmget(Constant.MESSAGE_ACCEPTER);
+        String messageId = (String) idMessageMap.get(id);
+        Map<Object, Object> messageMap = redisUtils.hmget(Constant.MESSAGE);
+        String message = (String) messageMap.get(messageId);
+        redisUtils.hmDelete(Constant.MESSAGE, messageId);
+        redisUtils.hmDelete(Constant.MESSAGE_ACCEPTER, id);
+        return ResponseUtil.simpleSuccessInfo(message);
     }
 }

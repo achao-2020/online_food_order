@@ -1,6 +1,7 @@
 package com.achao.sdk.pojo.dto;
 
 import com.achao.sdk.annoation.NotReflect;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,6 +23,6 @@ public class QueryPageDTO extends BaseDTO{
     private Long current;
     @ApiModelProperty(value = "conditions", notes = "查询的条件")
     private List<SearchCriteriaPO> conditions;
-    @ApiModelProperty(value = "orders", notes = "排序字段，true为ASC， false为DESC" )
+    @ApiModelProperty(value = "orders", notes = "排序字段，true为ASC， false为DESC")
     private Map<String, Boolean> orders;
 }

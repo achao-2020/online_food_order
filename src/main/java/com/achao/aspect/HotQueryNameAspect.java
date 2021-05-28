@@ -1,4 +1,4 @@
-package com.achao.redis.aspect;
+package com.achao.aspect;
 
 import com.achao.controller.DishesController;
 import com.achao.controller.StoreController;
@@ -6,6 +6,8 @@ import com.achao.redis.RedisService;
 import com.achao.sdk.pojo.constant.Constant;
 import com.achao.sdk.pojo.dto.QueryPageDTO;
 import com.achao.sdk.pojo.dto.SearchCriteriaPO;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -19,6 +21,7 @@ import java.util.List;
  * 热点餐品名称缓存处理
  * @author achao
  */
+@Slf4j
 @Aspect
 @Component
 public class HotQueryNameAspect {
@@ -34,6 +37,9 @@ public class HotQueryNameAspect {
     public void addHotName(JoinPoint joinPoint) {
         QueryPageDTO queryPageDTO = (QueryPageDTO) joinPoint.getArgs()[0];
         List<SearchCriteriaPO> conditions = queryPageDTO.getConditions();
+        if (CollectionUtils.isEmpty(conditions)) {
+            return;
+        }
         String redisHostKey = getRedisHostKey(joinPoint.getThis());
         for (SearchCriteriaPO condition : conditions) {
             // 如果搜索的条件中包含名称，则将其所有前缀，作为key，缓存到redis

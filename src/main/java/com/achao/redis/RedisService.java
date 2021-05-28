@@ -39,8 +39,9 @@ public class RedisService {
                 results.forEach(result -> {
                     StoreVO storeVO = (StoreVO) result;
                     redisUtils.hset(Constant.STORE_QUERY_RESULT, storeVO.getId(), storeVO, Constant.REDIS_DEFOULT_EXPIRE_TIME);
-                    redisUtils.geoSet(Constant.LOCATION_STORE, storeVO.getId(), storeVO.getLongitude(),
+                    boolean b = redisUtils.geoSet(Constant.LOCATION_STORE, storeVO.getId(), storeVO.getLongitude(),
                             storeVO.getLatitude(), Constant.REDIS_DEFOULT_EXPIRE_TIME);
+                    log.info("缓存商店的位置信息", b);
                 });
             }
         }
@@ -64,7 +65,7 @@ public class RedisService {
         try {
             redisUtils.zSetAdd(key, value, 1);
             log.info("保存热点餐品名称成功！name:" + value);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("保存热点餐品名称失败");
         }
     }

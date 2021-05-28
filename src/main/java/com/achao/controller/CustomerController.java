@@ -39,6 +39,12 @@ public class CustomerController {
         return customerService.login(request);
     }
 
+    @GetMapping("/loginOut")
+    @ApiOperation(value = "顾客登出", notes = "顾客登陆，提供用户密码", response = Result.class)
+    public Result<String> loginOut(@RequestParam("id")String id) {
+        return customerService.loginOut(id);
+    }
+
     @PostMapping("/create")
     @ApiOperation(value = "创建（注册）顾客", notes = "创建一个顾客, 当id不为空时候，按照id更新顾客信息", response = Result.class)
     public Result<CustomerVO> createCustomer(@RequestBody CustomerDTO request) {
@@ -94,6 +100,12 @@ public class CustomerController {
     @PostMapping("/deliverTrail/{id}")
     public Result<DeliverLocationVO> deliverTrail(@PathVariable("id") String id) {
         return delivererService.deliverTrail(id);
+    }
+
+    @ApiOperation(value = "顾客获取订阅商店推送的消息", notes = "顾客获取订阅商店推送的消息", response = Result.class)
+    @GetMapping("/getSubscribeMessage/{id}")
+    public Result<String> getSubscribeMessage(@PathVariable String id) {
+        return customerService.getSubscribeMessage(id);
     }
 
     /**

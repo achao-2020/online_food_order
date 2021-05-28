@@ -89,6 +89,7 @@ public class DishesService extends BaseService<DisheMapper, DishesPO, DishesVO> 
 
     /**
      * 根据搜索前缀补充后面的字符串
+     *
      * @param prefix
      * @return
      */
@@ -100,9 +101,11 @@ public class DishesService extends BaseService<DisheMapper, DishesPO, DishesVO> 
     @Transactional(rollbackFor = RuntimeException.class)
     public Result<String> uploadPhoto(MultipartFile file, String dishesId) {
         String storeId = this.queryById(dishesId).getInfo().getStoreId();
-        String parentPath = this.getClass().getClassLoader().getResource("").getPath();
-        String filename = file.getOriginalFilename();
-        String path = parentPath + "photo/dishes/" + storeId + "/"+ filename;
+        String parentPath = "D:/IdeaProjects/online_food_order/photo/";
+        String originalFilename = file.getOriginalFilename();
+        int lastIndexOf = originalFilename.lastIndexOf(".");
+        String fileName = dishesId + originalFilename.substring(lastIndexOf);
+        String path = parentPath + "photo/dishes/" + storeId + "/" + fileName;
         try {
             if (!FileUtil.saveFile(file, path)) {
                 return ResponseUtil.simpleFail(HttpStatus.BAD_REQUEST, "上传的图片大小不能超过1M", "失败");
@@ -119,6 +122,10 @@ public class DishesService extends BaseService<DisheMapper, DishesPO, DishesVO> 
 
     public ResponseEntity<byte[]> downPhoto(String dishesId) {
         String path = this.queryById(dishesId).getInfo().getPhoto();
+        if (StringUtils.isBlank(path)) {
+            log.info(dishesId + "没有图片");
+            return null;
+        }
         try {
             File file = new File(path);
             FileInputStream fileInputStream = new FileInputStream(file);
